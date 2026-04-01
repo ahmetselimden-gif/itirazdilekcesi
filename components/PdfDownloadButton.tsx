@@ -4,6 +4,7 @@ type PdfDownloadButtonProps = {
   elementId: string;
   fileName: string;
   disabled?: boolean;
+  accessToken?: string;
 };
 
 const buttonClassName =
@@ -13,9 +14,18 @@ export default function PdfDownloadButton({
   elementId,
   fileName,
   disabled = false,
+  accessToken = "",
 }: PdfDownloadButtonProps) {
   const handleDownload = async () => {
-    if (disabled) {
+    if (disabled || !accessToken) {
+      return;
+    }
+
+    const verification = await fetch(
+      `/api/payments/access?token=${encodeURIComponent(accessToken)}`
+    );
+
+    if (!verification.ok) {
       return;
     }
 

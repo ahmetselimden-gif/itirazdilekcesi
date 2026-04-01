@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useId, useState } from "react";
+import { FormEvent, useEffect, useId, useState } from "react";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import PetitionDocument from "@/components/PetitionDocument";
 import type {
@@ -21,6 +21,16 @@ const defaultForm: TrafficFormData = {
   explanation: "",
 };
 
+const defaultPaymentForm = {
+  email: "",
+  phone: "",
+  city: "",
+  address: "",
+};
+
+const SNAPSHOT_KEY = "petition_checkout_snapshot_v1";
+const ACCESS_TOKEN_KEY = "petition_payment_access_v1";
+
 const fieldClassName =
   "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
 
@@ -29,6 +39,13 @@ const textareaClassName =
 
 const primaryButtonClassName =
   "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
+
+type SnapshotPayload = {
+  form: TrafficFormData;
+  result: TrafficGenerationResult;
+  paymentForm: typeof defaultPaymentForm;
+  showPayment: boolean;
+};
 
 export default function TrafficPetitionTool() {
   const fullNameId = useId();
@@ -41,18 +58,31 @@ export default function TrafficPetitionTool() {
   const cameraStatusId = useId();
   const institutionId = useId();
   const explanationId = useId();
+  const paymentEmailId = useId();
+  const paymentPhoneId = useId();
+  const paymentCityId = useId();
+  const paymentAddressId = useId();
 
   const [form, setForm] = useState<TrafficFormData>(defaultForm);
+  const [paymentForm, setPaymentForm] = useState(defaultPaymentForm);
   const [result, setResult] = useState<TrafficGenerationResult | null>(null);
   const [error, setError] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentStatusMessage, setPaymentStatusMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [paymentReady, setPaymentReady] = useState(false);
+  const [paymentAccessToken, setPaymentAccessToken] = useState("");
   const [approvalInfo, setApprovalInfo] = useState(false);
   const [approvalKvkk, setApprovalKvkk] = useState(false);
 
   const updateField = (key: keyof TrafficFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const updatePaymentField = (key: keyof typeof defaultPaymentForm, value: string) => {
+    setPaymentForm((current) => ({ ...current, [key]: value }));
   };
 
   const validateForm = () => {
@@ -73,12 +103,110 @@ export default function TrafficPetitionTool() {
     return "";
   };
 
+  const validatePaymentForm = () => {
+    if (!paymentForm.email || !paymentForm.phone || !paymentForm.city || !paymentForm.address) {
+      return "Ödeme için e-posta, telefon, şehir ve adres alanlarını doldurun.";
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paymentForm.email)) {
+      return "Geçerli bir e-posta adresi girin.";
+    }
+
+    if (form.tckn && !/^\d{11}$/.test(form.tckn)) {
+      return "İyzico için TCKN alanı 11 haneli olmalıdır.";
+    }
+
+    return "";
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const rawSnapshot = window.sessionStorage.getItem(SNAPSHOT_KEY);
+    if (rawSnapshot) {
+      try {
+        const snapshot = JSON.parse(rawSnapshot) as SnapshotPayload;
+        setForm(snapshot.form);
+        setResult(snapshot.result);
+        setPaymentForm(snapshot.paymentForm || defaultPaymentForm);
+        setShowPayment(snapshot.showPayment);
+      } catch {
+        window.sessionStorage.removeItem(SNAPSHOT_KEY);
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    const access = params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    const message = params.get("message");
+
+    if (message) {
+      setPaymentError(message);
+    }
+
+    if (payment === "failed") {
+      setShowPayment(true);
+      setPaymentReady(false);
+    }
+
+    const verifyToken = async (token: string) => {
+      try {
+        const response = await fetch(`/api/payments/access?token=${encodeURIComponent(token)}`);
+        const data = (await response.json()) as { valid?: boolean; error?: string };
+
+        if (!response.ok || !data.valid) {
+          setPaymentReady(false);
+          setPaymentAccessToken("");
+          setPaymentError(data.error || "Ödeme doğrulanamadı.");
+          window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+          return;
+        }
+
+        setShowPayment(true);
+        setPaymentReady(true);
+        setPaymentAccessToken(token);
+        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        window.sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+      } catch {
+        setPaymentError("Ödeme doğrulaması sırasında bağlantı hatası oluştu.");
+      }
+    };
+
+    if (access) {
+      void verifyToken(access);
+    }
+
+    if (payment || access || message) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !result) {
+      return;
+    }
+
+    const snapshot: SnapshotPayload = {
+      form,
+      result,
+      paymentForm,
+      showPayment,
+    };
+
+    window.sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
+  }, [form, result, paymentForm, showPayment]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    setPaymentError("");
+    setPaymentStatusMessage("");
     setIsLoading(true);
     setShowPayment(false);
     setPaymentReady(false);
+    setPaymentAccessToken("");
 
     const validationError = validateForm();
     if (validationError) {
@@ -111,6 +239,7 @@ export default function TrafficPetitionTool() {
       }
 
       setResult(data);
+      window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -119,6 +248,55 @@ export default function TrafficPetitionTool() {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePaymentStart = async () => {
+    setPaymentError("");
+    setPaymentStatusMessage("");
+
+    const validationError = validatePaymentForm();
+    if (validationError) {
+      setPaymentError(validationError);
+      return;
+    }
+
+    setIsPaymentLoading(true);
+
+    try {
+      const response = await fetch("/api/payments/iyzico/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          tckn: form.tckn,
+          email: paymentForm.email,
+          phone: paymentForm.phone,
+          city: paymentForm.city,
+          address: paymentForm.address,
+        }),
+      });
+
+      const data = (await response.json()) as {
+        checkoutUrl?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !data.checkoutUrl) {
+        throw new Error(data.error || "Ödeme sayfası açılamadı.");
+      }
+
+      window.location.href = data.checkoutUrl;
+    } catch (requestError) {
+      setPaymentError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Ödeme başlatılırken beklenmeyen bir hata oluştu."
+      );
+    } finally {
+      setIsPaymentLoading(false);
     }
   };
 
@@ -369,35 +547,68 @@ export default function TrafficPetitionTool() {
             <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
               <h3 className="font-display text-3xl text-navy-deep">Ödeme Kontrolü</h3>
               <p className="mt-3 text-[15px] leading-8 text-muted">
-                PDF indirme işlemi ödeme ve yasal onay kontrolüne bağlıdır. Bu alan, iyzico entegrasyonuna hazır placeholder olarak düzenlenmiştir.
+                PDF indirme işlemi iyzico ödeme sonucu doğrulandıktan sonra aktif olur.
               </p>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor={paymentEmailId} className="text-sm font-bold text-navy">
+                    E-posta
+                  </label>
+                  <input
+                    id={paymentEmailId}
+                    className={fieldClassName}
+                    value={paymentForm.email}
+                    onChange={(event) => updatePaymentField("email", event.target.value)}
+                    placeholder="ornek@eposta.com"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={paymentPhoneId} className="text-sm font-bold text-navy">
+                    Telefon
+                  </label>
+                  <input
+                    id={paymentPhoneId}
+                    className={fieldClassName}
+                    value={paymentForm.phone}
+                    onChange={(event) => updatePaymentField("phone", event.target.value)}
+                    placeholder="05xx xxx xx xx"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={paymentCityId} className="text-sm font-bold text-navy">
+                    Şehir
+                  </label>
+                  <input
+                    id={paymentCityId}
+                    className={fieldClassName}
+                    value={paymentForm.city}
+                    onChange={(event) => updatePaymentField("city", event.target.value)}
+                    placeholder="İstanbul"
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor={paymentAddressId} className="text-sm font-bold text-navy">
+                    Fatura Adresi
+                  </label>
+                  <input
+                    id={paymentAddressId}
+                    className={fieldClassName}
+                    value={paymentForm.address}
+                    onChange={(event) => updatePaymentField("address", event.target.value)}
+                    placeholder="Mahalle, cadde, sokak ve kapı bilgisi"
+                  />
+                </div>
+              </div>
 
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
                 <div>
                   <h4 className="text-sm font-bold text-navy">Ön Bilgilendirme</h4>
                   <p className="mt-2 text-sm leading-7 text-muted">
                     Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe PDF&apos;i oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme sonrası dijital olarak anında yapılır.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-bold text-navy">Ödeme ve Teslimat Notu</h4>
-                  <p className="mt-2 text-sm leading-7 text-muted">
-                    iyzico Checkout Form entegrasyonunda ödeme sonucu callback üzerinden doğrulanacak ve ödeme sonucu ayrıca token ile sorgulanacaktır.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-bold text-navy">KVKK Aydınlatması</h4>
-                  <p className="mt-2 text-sm leading-7 text-muted">
-                    Ad, TCKN, plaka ve başvuru içeriği; dilekçe oluşturma, ödeme doğrulama ve kullanıcı destek süreçleri amacıyla işlenir.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-bold text-navy">Mesafeli Sözleşme Notu</h4>
-                  <p className="mt-2 text-sm leading-7 text-muted">
-                    Dijital teslimatın ödeme sonrası anında başlayacağı durumlarda cayma hakkına ilişkin sonuçlar sözleşmede açık biçimde belirtilmelidir.
                   </p>
                 </div>
 
@@ -422,19 +633,32 @@ export default function TrafficPetitionTool() {
                 </label>
               </div>
 
+              {paymentStatusMessage ? (
+                <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-7 text-emerald-800">
+                  {paymentStatusMessage}
+                </div>
+              ) : null}
+
+              {paymentError ? (
+                <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-danger">
+                  {paymentError}
+                </div>
+              ) : null}
+
               <div className="mt-5 flex flex-wrap gap-3">
                 <button
                   type="button"
                   className={primaryButtonClassName}
-                  disabled={!approvalInfo || !approvalKvkk}
-                  onClick={() => setPaymentReady(true)}
+                  disabled={!approvalInfo || !approvalKvkk || isPaymentLoading}
+                  onClick={handlePaymentStart}
                 >
-                  Ödemeyi tamamla
+                  {isPaymentLoading ? "İyzico yönlendiriliyor..." : "İyzico ile öde"}
                 </button>
                 <PdfDownloadButton
                   elementId="petition-pdf-document"
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
-                  disabled={!paymentReady || !approvalInfo || !approvalKvkk}
+                  accessToken={paymentAccessToken}
+                  disabled={!paymentReady || !paymentAccessToken}
                 />
               </div>
             </div>
