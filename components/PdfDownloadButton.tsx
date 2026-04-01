@@ -6,6 +6,9 @@ type PdfDownloadButtonProps = {
   disabled?: boolean;
 };
 
+const buttonClassName =
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-surface px-5 text-sm font-bold text-navy transition duration-200 hover:-translate-y-0.5 hover:bg-navy hover:text-white disabled:cursor-not-allowed disabled:opacity-55";
+
 export default function PdfDownloadButton({
   elementId,
   fileName,
@@ -37,12 +40,7 @@ export default function PdfDownloadButton({
   };
 
   return (
-    <button
-      type="button"
-      className="secondary-button"
-      onClick={handleDownload}
-      disabled={disabled}
-    >
+    <button type="button" className={buttonClassName} onClick={handleDownload} disabled={disabled}>
       PDF indir
     </button>
   );

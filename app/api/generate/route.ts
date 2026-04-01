@@ -5,14 +5,42 @@ import {
   buildTrafficPrompt,
   type TrafficFormData,
 } from "@/lib/trafficPetition";
+import {
+  checkRateLimit,
+  isTrustedOrigin,
+  sanitizeTrafficPayload,
+} from "@/lib/requestSecurity";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    if (!isTrustedOrigin(request)) {
+      return NextResponse.json(
+        { error: "Geçersiz istek kaynağı." },
+        { status: 403 }
+      );
+    }
+
+    const rateLimit = checkRateLimit(request);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Çok fazla istek gönderildi. Lütfen biraz sonra tekrar deneyin." },
+        { status: 429 }
+      );
+    }
+
+    const contentType = request.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      return NextResponse.json(
+        { error: "Geçersiz içerik türü." },
+        { status: 415 }
+      );
+    }
+
     const body = (await request.json()) as Partial<TrafficFormData>;
-    const payload: TrafficFormData = {
+    const payload = sanitizeTrafficPayload({
       fullName: body.fullName?.trim() || "",
       tckn: body.tckn?.trim() || "",
       plate: body.plate?.trim() || "",
@@ -23,7 +51,7 @@ export async function POST(request: Request) {
       cameraStatus: body.cameraStatus?.trim() || "",
       institution: body.institution?.trim() || "",
       explanation: body.explanation?.trim() || "",
-    };
+    }) satisfies TrafficFormData;
 
     if (
       !payload.fullName ||
@@ -37,6 +65,20 @@ export async function POST(request: Request) {
     ) {
       return NextResponse.json(
         { error: "Lütfen zorunlu alanların tamamını doldurun." },
+        { status: 400 }
+      );
+    }
+
+    if (payload.tckn && !/^\d{11}$/.test(payload.tckn)) {
+      return NextResponse.json(
+        { error: "TCKN yalnızca 11 haneli rakamlardan oluşmalıdır." },
+        { status: 400 }
+      );
+    }
+
+    if (payload.notificationDate < payload.penaltyDate) {
+      return NextResponse.json(
+        { error: "Tebliğ tarihi, ceza tarihinden önce olamaz." },
         { status: 400 }
       );
     }
