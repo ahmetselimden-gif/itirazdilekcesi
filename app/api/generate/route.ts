@@ -7,42 +7,42 @@ import {
 } from "@/lib/trafficPetition";
 
 export async function POST(request: Request) {
+  const body = (await request.json()) as Partial<TrafficFormData>;
+  const payload: TrafficFormData = {
+    fullName: body.fullName?.trim() || "",
+    tckn: body.tckn?.trim() || "",
+    plate: body.plate?.trim() || "",
+    penaltyDate: body.penaltyDate?.trim() || "",
+    notificationDate: body.notificationDate?.trim() || "",
+    penaltyType: body.penaltyType?.trim() || "",
+    location: body.location?.trim() || "",
+    cameraStatus: body.cameraStatus?.trim() || "",
+    institution: body.institution?.trim() || "",
+    explanation: body.explanation?.trim() || "",
+  };
+
+  if (
+    !payload.fullName ||
+    !payload.plate ||
+    !payload.penaltyDate ||
+    !payload.notificationDate ||
+    !payload.penaltyType ||
+    !payload.location ||
+    !payload.cameraStatus ||
+    !payload.explanation
+  ) {
+    return NextResponse.json(
+      { error: "Lütfen zorunlu alanların tamamını doldurun." },
+      { status: 400 }
+    );
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json(buildFallbackTrafficResult(payload));
+  }
+
   try {
-    const body = (await request.json()) as Partial<TrafficFormData>;
-    const payload: TrafficFormData = {
-      fullName: body.fullName?.trim() || "",
-      tckn: body.tckn?.trim() || "",
-      plate: body.plate?.trim() || "",
-      penaltyDate: body.penaltyDate?.trim() || "",
-      notificationDate: body.notificationDate?.trim() || "",
-      penaltyType: body.penaltyType?.trim() || "",
-      location: body.location?.trim() || "",
-      cameraStatus: body.cameraStatus?.trim() || "",
-      institution: body.institution?.trim() || "",
-      explanation: body.explanation?.trim() || "",
-    };
-
-    if (
-      !payload.fullName ||
-      !payload.plate ||
-      !payload.penaltyDate ||
-      !payload.notificationDate ||
-      !payload.penaltyType ||
-      !payload.location ||
-      !payload.cameraStatus ||
-      !payload.explanation
-    ) {
-      return NextResponse.json(
-        { error: "Lütfen zorunlu alanların tamamını doldurun." },
-        { status: 400 }
-      );
-    }
-
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(buildFallbackTrafficResult(payload));
-    }
-
     const client = new OpenAI({ apiKey });
     const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 
@@ -52,7 +52,6 @@ export async function POST(request: Request) {
     });
 
     const rawText = response.output_text?.trim();
-
     if (!rawText) {
       return NextResponse.json(buildFallbackTrafficResult(payload));
     }
@@ -78,14 +77,7 @@ export async function POST(request: Request) {
       source: "openai",
     });
   } catch (error) {
-    console.error("Petition generation failed:", error);
-
-    return NextResponse.json(
-      {
-        error:
-          "Dilekçe oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
-      },
-      { status: 500 }
-    );
+    console.error("Petition generation failed, using fallback:", error);
+    return NextResponse.json(buildFallbackTrafficResult(payload));
   }
 }
