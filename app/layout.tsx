@@ -3,29 +3,71 @@ import Link from "next/link";
 import "./globals.css";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
+const siteName = "itirazdilekcesi.com";
+const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
+const defaultDescription =
+  "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve resmi PDF olarak indirin.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Trafik Cezası İtiraz Dilekçesi Hazırla",
-  description:
-    "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve temiz PDF olarak indirin.",
+  applicationName: siteName,
+  title: {
+    default: defaultTitle,
+    template: `%s | ${siteName}`,
+  },
+  description: defaultDescription,
+  keywords: [
+    "trafik cezası itiraz dilekçesi",
+    "trafik cezasına itiraz",
+    "kırmızı ışık cezası itirazı",
+    "hız cezası itiraz dilekçesi",
+    "park cezası itirazı",
+    "trafik cezası dilekçe örneği",
+  ],
+  category: "legal services",
   alternates: {
     canonical: "/",
+  },
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
     type: "website",
     url: siteUrl,
-    siteName: "itirazdilekcesi.com",
-    title: "Trafik Cezası İtiraz Dilekçesi Hazırla",
-    description:
-      "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve temiz PDF olarak indirin.",
+    siteName,
     locale: "tr_TR",
+    title: defaultTitle,
+    description: defaultDescription,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Trafik Cezası İtiraz Dilekçesi Hazırla",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Trafik Cezası İtiraz Dilekçesi Hazırla",
-    description:
-      "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve temiz PDF olarak indirin.",
+    title: defaultTitle,
+    description: defaultDescription,
+    images: ["/opengraph-image"],
   },
 };
 
@@ -56,10 +98,16 @@ export default function RootLayout({
           <footer className="border-t border-line/80 bg-[rgba(255,253,248,0.95)]">
             <div className="mx-auto w-full max-w-7xl px-4 py-10 text-center sm:px-6 lg:px-8">
               <div className="mb-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold text-navy">
-                <Link href="/mesafeli-satis-sozlesmesi" className="transition hover:text-navy-deep hover:underline">
+                <Link
+                  href="/mesafeli-satis-sozlesmesi"
+                  className="transition hover:text-navy-deep hover:underline"
+                >
                   Mesafeli Satış Sözleşmesi
                 </Link>
-                <Link href="/iptal-ve-iade-politikasi" className="transition hover:text-navy-deep hover:underline">
+                <Link
+                  href="/iptal-ve-iade-politikasi"
+                  className="transition hover:text-navy-deep hover:underline"
+                >
                   İptal ve İade Politikası
                 </Link>
                 <Link href="/kvkk" className="transition hover:text-navy-deep hover:underline">
