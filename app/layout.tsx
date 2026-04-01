@@ -60,7 +60,6 @@ export default function RootLayout({
 
               <div className="footer-company">
                 <p>Destek için: destek@itirazdilekcesi.com</p>
-                <p>Web sitesi: www.itirazdilekcesi.com</p>
               </div>
 
               <p className="footer-disclaimer">

@@ -9,17 +9,15 @@ export default function DistanceSalesPage() {
       </p>
 
       <h2>1. Taraflar</h2>
-      <p>Satıcı: Ahmet Selim Baltaş</p>
-      <p>Adres: Fatih Mah. Sümer Cad. No: 9 Sultanbeyli / İstanbul</p>
-      <p>E-posta: info@itirazdilekcesi.com</p>
-      <p>Telefon: 0506 102 14 01</p>
+      <p>Satıcı: Dijital hizmet sağlayıcı</p>
+      <p>E-posta: destek@itirazdilekcesi.com</p>
       <p>Alıcı: Sipariş formunu dolduran kullanıcıdır.</p>
 
       <h2>2. Sözleşmenin Konusu</h2>
       <p>
         İşbu sözleşmenin konusu, alıcının elektronik ortamda sipariş verdiği
-        “Dijital Dilekçe Hazırlama” hizmetinin sunulmasına ilişkin tarafların hak
-        ve yükümlülüklerinin belirlenmesidir.
+        “Dijital Dilekçe Hazırlama” hizmetinin sunulmasına ilişkin tarafların
+        hak ve yükümlülüklerinin belirlenmesidir.
       </p>
 
       <h2>3. Hizmetin Kapsamı</h2>

@@ -46,12 +46,37 @@ export default function TrafficPetitionTool() {
     setForm((current) => ({ ...current, [key]: value }));
   };
 
+  const validateForm = () => {
+    const trimmedTckn = (form.tckn || "").trim();
+
+    if (trimmedTckn && !/^\d{11}$/.test(trimmedTckn)) {
+      return "TCKN alanı yalnızca 11 haneli rakamlardan oluşmalıdır.";
+    }
+
+    if (
+      form.penaltyDate &&
+      form.notificationDate &&
+      form.notificationDate < form.penaltyDate
+    ) {
+      return "Tebliğ tarihi, ceza tarihinden önce olamaz.";
+    }
+
+    return "";
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setIsLoading(true);
     setShowPayment(false);
     setPaymentReady(false);
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/generate", {
@@ -131,9 +156,16 @@ export default function TrafficPetitionTool() {
                 <input
                   id={tcknId}
                   value={form.tckn}
-                  onChange={(event) => updateField("tckn", event.target.value)}
+                  onChange={(event) =>
+                    updateField("tckn", event.target.value.replace(/\D/g, ""))
+                  }
+                  inputMode="numeric"
+                  maxLength={11}
                   placeholder="Opsiyonel"
                 />
+                <small className="field-note">
+                  Girilecekse TCKN yalnızca 11 haneli rakamlardan oluşmalıdır.
+                </small>
               </div>
 
               <div className="field">
@@ -163,6 +195,7 @@ export default function TrafficPetitionTool() {
                   id={notificationDateId}
                   type="date"
                   value={form.notificationDate}
+                  min={form.penaltyDate || undefined}
                   onChange={(event) =>
                     updateField("notificationDate", event.target.value)
                   }
@@ -170,8 +203,8 @@ export default function TrafficPetitionTool() {
                 />
                 <small className="field-note">
                   Eğer ceza kağıdı eve gelmediyse bugünün tarihini girerek
-                  devam edebilirsiniz. İtiraz süresi çoğu durumda tebliğ
-                  tarihiyle ilişkilidir.
+                  devam edebilirsiniz. Tebliğ tarihi, ceza tarihinden önce
+                  olamaz.
                 </small>
               </div>
 
