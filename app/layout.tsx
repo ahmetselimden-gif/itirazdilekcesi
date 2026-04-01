@@ -7,6 +7,7 @@ const siteName = "itirazdilekcesi.com";
 const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
 const defaultDescription =
   "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve resmi PDF olarak indirin.";
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -28,6 +29,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  verification: googleVerification
+    ? {
+        google: googleVerification,
+      }
+    : undefined,
   authors: [{ name: siteName }],
   creator: siteName,
   publisher: siteName,
