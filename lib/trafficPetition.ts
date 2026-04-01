@@ -50,50 +50,17 @@ function normalizeExplanation(explanation: string) {
   return explanation.replace(/\s+/g, " ").trim();
 }
 
-function sentenceCase(value: string) {
-  if (!value) {
-    return value;
+function buildMeasuredExplanation(explanation: string) {
+  const cleaned = normalizeExplanation(explanation);
+
+  if (!cleaned) {
+    return "Başvuru konusu idari para cezasına ilişkin işlemin dayanaklarının ve maddi vakıanın hukuki denetime elverişli şekilde incelenmesi talep edilmektedir.";
   }
 
-  return value.charAt(0).toLocaleUpperCase("tr-TR") + value.slice(1);
+  return `Başvuruya konu ceza işlemine ilişkin itiraz nedenleri başvuran tarafından "${cleaned}" şeklinde açıklanmıştır. Bu beyanların tutanak içeriği ve dosya kapsamı ile birlikte değerlendirilmesi talep edilmektedir.`;
 }
 
-function includesAny(haystack: string, words: string[]) {
-  return words.some((word) => haystack.includes(word));
-}
-
-function buildSituationSummary(data: TrafficFormData) {
-  const explanation = normalizeExplanation(data.explanation).toLocaleLowerCase("tr-TR");
-  const cleanOriginal = normalizeExplanation(data.explanation);
-
-  if (!cleanOriginal) {
-    return "Başvuruya konu idari para cezasına ilişkin maddi vakıanın ve isnadın dayanaklarının somut biçimde ortaya konulması gerektiği değerlendirilmektedir.";
-  }
-
-  if (includesAny(explanation, ["sarı ışık", "sari ışık", "kırmızı değildi", "kirmizi degildi"])) {
-    return "Başvuran, kavşak geçişi sırasında ihlalin gerçekleşmediğini; olay anındaki trafik ışığı fazının ceza tutanağında gösterildiği şekilde olmadığını ileri sürmektedir.";
-  }
-
-  if (includesAny(explanation, ["yanlış plaka", "yanlis plaka", "plaka yanlış", "plaka yanlis"])) {
-    return "Başvuran, cezanın dayanağını oluşturan tespit ile araç/plaka bilgileri arasında uyumsuzluk bulunduğunu ve işlemin yanlış araca yönelmiş olabileceğini ileri sürmektedir.";
-  }
-
-  if (includesAny(explanation, ["tebliğ", "teblig", "geç geldi", "eve gelmedi"])) {
-    return "Başvuran, tebliğ ve bildirim sürecinin sağlıklı işletilmediğini, bu nedenle savunma ve başvuru hakkının olumsuz etkilenmiş olabileceğini belirtmektedir.";
-  }
-
-  if (includesAny(explanation, ["radar yok", "kamera yok", "fotoğraf yok", "fotograf yok", "delil yok"])) {
-    return "Başvuran, isnadın teknik veya görsel delillerle yeterince desteklenmediğini ve ceza işleminin bu yönüyle denetime muhtaç olduğunu ifade etmektedir.";
-  }
-
-  if (includesAny(explanation, ["park", "durak", "durma", "bekleme"])) {
-    return "Başvuran, park veya durma eylemine ilişkin tespitin somut olayla tam örtüşmediğini ve işlemin maddi vakıa yönünden yeniden incelenmesi gerektiğini savunmaktadır.";
-  }
-
-  return `Başvuran, olayın özünü "${cleanOriginal}" şeklinde açıklamakta; bu anlatımın ceza tutanağındaki tespit ile tam olarak örtüşmediğini ileri sürmektedir.`;
-}
-
-function buildUserFocusedReasoning(data: TrafficFormData) {
+function buildLegalReasoning(data: TrafficFormData) {
   const explanation = normalizeExplanation(data.explanation).toLocaleLowerCase("tr-TR");
   const reasons: string[] = [];
 
@@ -103,45 +70,31 @@ function buildUserFocusedReasoning(data: TrafficFormData) {
 
   if (data.cameraStatus === "Bilmiyorum") {
     reasons.push(
-      "Dosyada açık ve denetlenebilir teknik kayıt bulunup bulunmadığının ortaya konulması önem arz etmektedir. İspat yükünün idarede olduğu gözetildiğinde, yeterli delil ortaya konulamaması halinde işlemin hukuki denetimi zorunlu hale gelir."
+      "Dosyada isnada dayanak teşkil eden teknik kayıt veya görsel delil bulunup bulunmadığının açık biçimde ortaya konulması önem arz etmektedir. İspat yükünün idarede olduğu gözetildiğinde, delil yapısının yeterliliği ayrıca değerlendirilmelidir."
     );
   } else if (data.cameraStatus === "Yok") {
     reasons.push(
-      "İsnadın kamera, radar veya benzeri teknik kayıtlarla desteklenmemesi halinde tespitin hangi somut verilere dayandığının ayrıca açıklanması gerekir. Bu husus açıklığa kavuşturulmadan tesis edilen işlem tartışmalı hale gelir."
+      "İsnadın kamera, radar veya benzeri teknik kayıtlarla desteklenmemesi halinde tespitin hangi somut verilere dayandığının ayrıca açıklanması gerekir."
     );
   }
 
   if (data.penaltyType === "Hız ihlali") {
     reasons.push(
-      "Hız ölçümüne dayanılan hallerde cihazın son kalibrasyon durumu, tolerans hesabı ve ölçüm koşullarının mevzuata uygunluğu incelenmeden sağlıklı bir hukuki değerlendirme yapılamaz."
+      "Hız ölçümüne dayanılan hallerde cihazın kalibrasyon durumu, tolerans hesabı ve ölçüm koşullarının mevzuata uygunluğu da değerlendirilmelidir."
     );
   }
 
-  if (includesAny(explanation, ["sarı ışık", "sari ışık", "kırmızı değildi", "kirmizi degildi"])) {
+  if (
+    /yanlış|yanlis|haksız|haksiz|eksik|usul|tebliğ|teblig|delil|kamera|radar|plaka/i.test(
+      explanation
+    )
+  ) {
     reasons.push(
-      "Olay anındaki ışık fazının ve aracın kavşağa giriş zamanlamasının hiçbir kuşkuya yer vermeyecek şekilde ortaya konulması gerekir. Aksi halde ihlalin maddi unsurlarının oluşup oluşmadığı tartışmalı kalır."
-    );
-  }
-
-  if (includesAny(explanation, ["yanlış plaka", "yanlis plaka", "plaka yanlış", "plaka yanlis"])) {
-    reasons.push(
-      "Plaka veya araç tespitine ilişkin hata ihtimali bulunan hallerde işlemin kişiselleştirilmesi ve doğru araca yöneltilmesi şarttır. Bu konuda tereddüt bulunması işlemin iptali sonucunu doğurabilir."
-    );
-  }
-
-  if (includesAny(explanation, ["tebliğ", "teblig", "geç geldi", "eve gelmedi"])) {
-    reasons.push(
-      "Tebliğ sürecine ilişkin usuli eksiklik iddiası, başvuru hakkının kullanılması bakımından ayrıca değerlendirilmelidir. Bildirim süreçlerinin mevzuata uygunluğu denetlenmeden sağlıklı sonuca varılamaz."
+      "Başvuru dilekçesinde ileri sürülen hususlar birlikte değerlendirildiğinde, işlemin maddi dayanağı ile usuli yönlerinin yeniden incelenmesi gerektiği anlaşılmaktadır."
     );
   }
 
   return reasons.join(" ");
-}
-
-function professionalizeExplanation(data: TrafficFormData) {
-  const situationSummary = buildSituationSummary(data);
-
-  return `${situationSummary} Başvuranın anlatımı birlikte değerlendirildiğinde, ceza işlemine esas alınan maddi vakıanın tüm yönleriyle açıklığa kavuşturulması ve tutanağın hukuki denetime tabi tutulması gerektiği anlaşılmaktadır.`;
 }
 
 function inferEvaluation(data: TrafficFormData) {
@@ -150,18 +103,19 @@ function inferEvaluation(data: TrafficFormData) {
 
   if (data.cameraStatus !== "Var") score += 1;
   if (data.penaltyType === "Hız ihlali") score += 1;
-  if (includesAny(explanation, ["yanlış", "yanlis", "haksız", "haksiz", "eksik", "usul", "tebliğ", "teblig", "delil", "kamera", "radar"])) {
+  if (
+    /yanlış|yanlis|haksız|haksiz|eksik|usul|tebliğ|teblig|delil|kamera|radar|plaka/i.test(
+      explanation
+    )
+  ) {
     score += 2;
-  }
-  if (includesAny(explanation, ["sarı ışık", "sari ışık", "yanlış plaka", "yanlis plaka", "eve gelmedi", "geç geldi"])) {
-    score += 1;
   }
 
   if (score >= 4) {
     return {
       level: "Yüksek" as const,
       comment:
-        "Girilen olay anlatımı ve seçilen veriler, maddi tespit ve usul yönünden ciddi tartışma alanı oluşturuyor. Somut delil incelemesiyle itiraz zemini güçlenebilir.",
+        "Girilen bilgiler, maddi tespit ve delil yapısı bakımından güçlü bir itiraz zemini oluşturuyor.",
     };
   }
 
@@ -169,14 +123,14 @@ function inferEvaluation(data: TrafficFormData) {
     return {
       level: "Orta" as const,
       comment:
-        "Başvuru içeriği, ceza işlemine esas alınan tespit ve tebliğ sürecinin yeniden değerlendirilmesini gerektirebilecek noktalar içeriyor.",
+        "Başvuru içeriği, ceza işlemine esas alınan tespitlerin ve usul süreçlerinin yeniden değerlendirilmesini gerektirebilecek noktalar içeriyor.",
     };
   }
 
   return {
     level: "Düşük" as const,
     comment:
-      "Mevcut anlatım temel bir itiraz zemini sunuyor. Somut delil, tutanak hatası veya usul eksikliği daha açık belirtilirse başvuru gücü artabilir.",
+      "Mevcut açıklama temel bir itiraz zemini sunuyor. Somut delil ve usul eksikliği daha açık belirtilirse itiraz gücü artabilir.",
   };
 }
 
@@ -185,7 +139,7 @@ export function buildTrafficPrompt(data: TrafficFormData) {
 
   return `
 Sen trafik cezası itiraz dilekçeleri hazırlayan deneyimli bir hukuk asistanısın.
-Kullanıcının anlattığı mevcut durumu dikkatle analiz et ve yalnızca verilen bilgilere dayanarak resmi Türkçe ile dilekçe üret.
+Kullanıcının verdiği bilgi ve olay anlatımına göre resmi Türkçe ile mantıklı, sade ve ölçülü bir dilekçe üret.
 
 Kurallar:
 - Cevabı yalnızca JSON ver.
@@ -194,10 +148,9 @@ Kurallar:
 - evaluationLevel yalnızca şu üç değerden biri olsun: Düşük, Orta, Yüksek.
 - petition alanı yalnızca dilekçe metni olsun.
 - Kullanıcının anlatmadığı hiçbir olguyu uydurma.
-- Kamera kaydı, tutanak hatası, tebligat eksikliği veya olay anı detayları açıkça verilmediyse bunları kesin olmuş gibi yazma.
-- Belirsiz konularda ölçülü dil kullan: "incelenmesi gerekmektedir", "denetime muhtaçtır", "iddia edilmektedir" gibi.
-- Kullanıcının yazdığı durumu hukuk diline çevir ama anlamını bozma.
-- Saçma, mekanik, yapay veya tekrar eden cümleler kurma.
+- İlk açıklama paragrafında kullanıcı adına ayrı bir yorum üretme; kullanıcının beyanını nötr ve kısa hukuk diliyle düzenle.
+- Tüm ceza türlerinde aynı otomatik vaka anlatımını kullanma.
+- Belirsiz konularda ölçülü dil kullan.
 - Şu tür yapay cümleleri kullanma:
   "Somut olayda kamera / radar durumu 'Bilmiyorum' olarak belirtilmiştir."
 - Dilekçe şu sırayla yazılsın:
@@ -213,7 +166,7 @@ Kurallar:
   ${resolvedInstitution}
 - KONU satırı şu mantıkta olsun:
   [ceza bilgisi] itirazı ve iptali istemi.
-- HUKUKİ NEDENLER bölümünde yalnızca kullanıcının anlattığı olaya mantıken uygun gerekçeleri yaz.
+- HUKUKİ NEDENLER bölümünde yalnızca kullanıcı beyanına mantıken uygun gerekçeleri yaz.
 - Kullanıcı hız ihlali seçtiyse ölçüm ve kalibrasyon denetimine değin.
 - Kamera/radar durumu kesin değilse delillerin açıklığa kavuşturulması gereğine doğal biçimde değin.
 - Sonuç bölümü şu anlamı taşısın:
@@ -240,8 +193,8 @@ export function buildFallbackTrafficResult(
 ): TrafficGenerationResult {
   const institution = resolveInstitution(data.institution, data.location);
   const institutionUpper = toTurkishUppercase(institution);
-  const explanationText = professionalizeExplanation(data);
-  const legalReasoning = buildUserFocusedReasoning(data);
+  const explanationText = buildMeasuredExplanation(data.explanation);
+  const legalReasoning = buildLegalReasoning(data);
   const evaluation = inferEvaluation(data);
 
   return {
@@ -249,7 +202,7 @@ export function buildFallbackTrafficResult(
       "T.C.",
       institutionUpper,
       "",
-      `KONU: ${sentenceCase(data.penaltyType)} nedeniyle düzenlenen trafik idari para cezasına itirazı ve iptali istemi.`,
+      `KONU: ${data.penaltyType} nedeniyle düzenlenen trafik idari para cezasına itirazı ve iptali istemi.`,
       "",
       "Başvuran Bilgileri",
       `Ad Soyad: ${data.fullName}`,

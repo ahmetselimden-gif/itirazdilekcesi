@@ -26,22 +26,18 @@ export async function POST(request: Request) {
       tckn?: string;
       email?: string;
       phone?: string;
-      address?: string;
-      city?: string;
       petitionToken?: string;
     };
 
     const fullName = body.fullName?.trim() || "";
     const email = body.email?.trim() || "";
     const phone = body.phone?.trim() || "";
-    const address = body.address?.trim() || "";
-    const city = body.city?.trim() || "";
     const tckn = body.tckn?.trim() || "";
     const petitionToken = body.petitionToken?.trim() || "";
 
-    if (!fullName || !email || !phone || !address || !city || !petitionToken) {
+    if (!fullName || !email || !phone || !petitionToken) {
       return NextResponse.json(
-        { error: "Ödeme için gerekli tüm alanlar ve dilekçe belirteci gereklidir." },
+        { error: "Ödeme için gerekli iletişim alanları ve dilekçe belirteci gereklidir." },
         { status: 400 }
       );
     }
@@ -56,10 +52,7 @@ export async function POST(request: Request) {
 
     const petitionVerification = verifyPetitionToken(petitionToken);
     if (!petitionVerification.valid) {
-      return NextResponse.json(
-        { error: petitionVerification.reason },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: petitionVerification.reason }, { status: 401 });
     }
 
     const conversationId = buildConversationId();
@@ -75,8 +68,8 @@ export async function POST(request: Request) {
         tckn,
         email,
         phone,
-        address,
-        city,
+        address: "Dijital hizmet teslimatı",
+        city: "Istanbul",
         ip: getClientIp(request),
       },
     });
@@ -86,7 +79,7 @@ export async function POST(request: Request) {
         {
           error:
             response.errorMessage ||
-            "İyzico ödeme formu başlatılamadı. Ayarlarınızı kontrol edin.",
+            "Ödeme formu başlatılamadı. Ayarlarınızı kontrol edin.",
         },
         { status: 400 }
       );

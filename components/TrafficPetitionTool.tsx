@@ -24,8 +24,6 @@ const defaultForm: TrafficFormData = {
 const defaultPaymentForm = {
   email: "",
   phone: "",
-  city: "",
-  address: "",
 };
 
 const SNAPSHOT_KEY = "petition_checkout_snapshot_v2";
@@ -62,8 +60,6 @@ export default function TrafficPetitionTool() {
   const explanationId = useId();
   const paymentEmailId = useId();
   const paymentPhoneId = useId();
-  const paymentCityId = useId();
-  const paymentAddressId = useId();
 
   const [form, setForm] = useState<TrafficFormData>(defaultForm);
   const [paymentForm, setPaymentForm] = useState(defaultPaymentForm);
@@ -106,8 +102,8 @@ export default function TrafficPetitionTool() {
   };
 
   const validatePaymentForm = () => {
-    if (!paymentForm.email || !paymentForm.phone || !paymentForm.city || !paymentForm.address) {
-      return "Ödeme için e-posta, telefon, şehir ve adres alanlarını doldurun.";
+    if (!paymentForm.email || !paymentForm.phone) {
+      return "Ödeme için e-posta ve telefon alanlarını doldurun.";
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paymentForm.email)) {
@@ -115,7 +111,7 @@ export default function TrafficPetitionTool() {
     }
 
     if (form.tckn && !/^\d{11}$/.test(form.tckn)) {
-      return "İyzico için TCKN alanı 11 haneli olmalıdır.";
+      return "Ödeme için TCKN alanı 11 haneli olmalıdır.";
     }
 
     if (!result?.petitionToken) {
@@ -234,9 +230,7 @@ export default function TrafficPetitionTool() {
       const data = (await response.json()) as ResultWithToken | { error?: string };
 
       if (!response.ok) {
-        throw new Error(
-          ("error" in data && data.error) || "Dilekçe oluşturulamadı."
-        );
+        throw new Error(("error" in data && data.error) || "Dilekçe oluşturulamadı.");
       }
 
       if (!("petition" in data)) {
@@ -279,8 +273,6 @@ export default function TrafficPetitionTool() {
           tckn: form.tckn,
           email: paymentForm.email,
           phone: paymentForm.phone,
-          city: paymentForm.city,
-          address: paymentForm.address,
           petitionToken: result?.petitionToken,
         }),
       });
@@ -318,19 +310,26 @@ export default function TrafficPetitionTool() {
               <span className="h-px w-8 bg-navy/30" />
               Dilekçe aracı
             </span>
-            <h2 className="mt-3 font-display text-4xl text-navy-deep">Trafik cezası itiraz formu</h2>
+            <h2 className="mt-3 font-display text-4xl text-navy-deep">
+              Trafik cezası itiraz formu
+            </h2>
             <p className="mt-3 text-[15px] leading-8 text-muted">
-              Zorunlu alanları doldurun, oluşturulan metni inceleyin ve ardından PDF indirme adımına geçin.
+              Zorunlu alanları doldurun, oluşturulan metni inceleyin ve ardından PDF
+              indirme adımına geçin.
             </p>
           </div>
 
           <div className="grid min-w-[280px] grid-cols-2 gap-3">
             <div className="rounded-2xl border border-line bg-surface-soft px-4 py-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">Fiyat</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                Fiyat
+              </p>
               <p className="mt-2 text-sm font-semibold text-ink">19,99 TL</p>
             </div>
             <div className="rounded-2xl border border-line bg-surface-soft px-4 py-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">Çıktı</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                Çıktı
+              </p>
               <p className="mt-2 text-sm font-semibold text-ink">Resmi PDF dilekçe</p>
             </div>
           </div>
@@ -415,7 +414,8 @@ export default function TrafficPetitionTool() {
                   required
                 />
                 <p className="text-xs leading-6 text-muted">
-                  Eğer ceza kağıdı eve gelmediyse bugünün tarihini girerek devam edebilirsiniz. Tebliğ tarihi, ceza tarihinden önce olamaz.
+                  Eğer ceza kağıdı eve gelmediyse bugünün tarihini girerek devam
+                  edebilirsiniz. Tebliğ tarihi, ceza tarihinden önce olamaz.
                 </p>
               </div>
 
@@ -512,7 +512,8 @@ export default function TrafficPetitionTool() {
           <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
             {!result ? (
               <div className="flex min-h-56 items-center justify-center rounded-[20px] border border-dashed border-line bg-surface-soft px-6 text-center text-[15px] leading-8 text-muted">
-                Dilekçeniz burada resmi evrak düzenine yakın bir önizleme olarak gösterilecektir.
+                Dilekçeniz burada resmi evrak düzenine yakın bir önizleme olarak
+                gösterilecektir.
               </div>
             ) : (
               <>
@@ -553,7 +554,7 @@ export default function TrafficPetitionTool() {
             <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
               <h3 className="font-display text-3xl text-navy-deep">Ödeme Kontrolü</h3>
               <p className="mt-3 text-[15px] leading-8 text-muted">
-                PDF indirme işlemi iyzico ödeme sonucu doğrulandıktan sonra aktif olur.
+                PDF indirme işlemi ödeme doğrulandıktan sonra aktif olur.
               </p>
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -582,39 +583,15 @@ export default function TrafficPetitionTool() {
                     placeholder="05xx xxx xx xx"
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <label htmlFor={paymentCityId} className="text-sm font-bold text-navy">
-                    Şehir
-                  </label>
-                  <input
-                    id={paymentCityId}
-                    className={fieldClassName}
-                    value={paymentForm.city}
-                    onChange={(event) => updatePaymentField("city", event.target.value)}
-                    placeholder="İstanbul"
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <label htmlFor={paymentAddressId} className="text-sm font-bold text-navy">
-                    Fatura Adresi
-                  </label>
-                  <input
-                    id={paymentAddressId}
-                    className={fieldClassName}
-                    value={paymentForm.address}
-                    onChange={(event) => updatePaymentField("address", event.target.value)}
-                    placeholder="Mahalle, cadde, sokak ve kapı bilgisi"
-                  />
-                </div>
               </div>
 
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
                 <div>
                   <h4 className="text-sm font-bold text-navy">Ön Bilgilendirme</h4>
                   <p className="mt-2 text-sm leading-7 text-muted">
-                    Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe PDF&apos;i oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme sonrası dijital olarak anında yapılır.
+                    Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe
+                    PDF&apos;i oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme
+                    sonrası dijital olarak anında yapılır.
                   </p>
                 </div>
 
@@ -658,7 +635,7 @@ export default function TrafficPetitionTool() {
                   disabled={!approvalInfo || !approvalKvkk || isPaymentLoading}
                   onClick={handlePaymentStart}
                 >
-                  {isPaymentLoading ? "İyzico yönlendiriliyor..." : "İyzico ile öde"}
+                  {isPaymentLoading ? "Ödeme sayfası açılıyor..." : "Ödemeye Geç"}
                 </button>
                 <PdfDownloadButton
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
@@ -671,7 +648,11 @@ export default function TrafficPetitionTool() {
           ) : null}
 
           <div className="rounded-[20px] border border-gold/45 bg-gold-soft/45 px-5 py-4 text-sm leading-7 text-muted">
-            <strong className="text-navy">Yasal Uyarı:</strong> Bu site bir avukatlık hizmeti vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan dilekçenin hukuki sonuçlarından kullanıcı sorumludur. Hak kaybına uğramamak için bir avukata danışmanız tavsiye edilir.
+            <strong className="text-navy">Yasal Uyarı:</strong> Bu site bir avukatlık
+            hizmeti vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik
+            olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan dilekçenin hukuki
+            sonuçlarından kullanıcı sorumludur. Hak kaybına uğramamak için bir avukata
+            danışmanız tavsiye edilir.
           </div>
         </div>
       </div>
