@@ -59,11 +59,6 @@ export default function RootLayout({
               </div>
 
               <div className="footer-company">
-                <p>Ticari Ünvan / Ad Soyad: Ahmet Selim Baltaş</p>
-                <p>
-                  Açık Adres: Fatih Mah. Sümer Cad. No: 9 Sultanbeyli / İstanbul
-                </p>
-                <p>İletişim: info@itirazdilekcesi.com | 0506 102 14 01</p>
                 <p>Destek için: destek@itirazdilekcesi.com</p>
                 <p>Web sitesi: www.itirazdilekcesi.com</p>
               </div>

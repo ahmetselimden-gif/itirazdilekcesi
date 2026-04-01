@@ -90,12 +90,26 @@ export default function TrafficPetitionTool() {
 
   return (
     <section id="dilekce-araci" className="tool-shell">
-      <div className="tool-heading">
-        <h2>Dilekçe oluşturma aracı</h2>
-        <p>
-          Zorunlu alanları doldurun, dilekçeyi inceleyin ve ardından PDF indirme
-          adımına geçin.
-        </p>
+      <div className="tool-header-row">
+        <div className="tool-heading">
+          <span className="section-tag">Dilekçe Aracı</span>
+          <h2>Trafik cezası itiraz formu</h2>
+          <p>
+            Zorunlu alanları doldurun, oluşturulan metni inceleyin ve ardından
+            PDF indirme adımına geçin.
+          </p>
+        </div>
+
+        <div className="tool-summary">
+          <div>
+            <strong>Fiyat</strong>
+            <span>19,99 TL</span>
+          </div>
+          <div>
+            <strong>Çıktı</strong>
+            <span>Resmi PDF dilekçe</span>
+          </div>
+        </div>
       </div>
 
       <div className="tool-layout">
@@ -155,9 +169,9 @@ export default function TrafficPetitionTool() {
                   required
                 />
                 <small className="field-note">
-                  Eğer ceza kağıdı eve gelmediyse bu kısmı boş bırakmak yerine
-                  bugünün tarihini girerek devam edebilirsiniz. İtiraz süresi
-                  çoğu durumda tebliğ tarihiyle ilişkilidir.
+                  Eğer ceza kağıdı eve gelmediyse bugünün tarihini girerek
+                  devam edebilirsiniz. İtiraz süresi çoğu durumda tebliğ
+                  tarihiyle ilişkilidir.
                 </small>
               </div>
 
@@ -187,7 +201,7 @@ export default function TrafficPetitionTool() {
               </div>
 
               <div className="field">
-                <label htmlFor={cameraStatusId}>Kamera / radar durumu</label>
+                <label htmlFor={cameraStatusId}>Kamera / Radar Durumu</label>
                 <select
                   id={cameraStatusId}
                   value={form.cameraStatus}
@@ -201,7 +215,7 @@ export default function TrafficPetitionTool() {
             </div>
 
             <div className="field">
-              <label htmlFor={institutionId}>Kurum adı</label>
+              <label htmlFor={institutionId}>Kurum Adı</label>
               <input
                 id={institutionId}
                 value={form.institution}
@@ -231,11 +245,11 @@ export default function TrafficPetitionTool() {
           </form>
         </div>
 
-        <div>
+        <div className="preview-column">
           <div className="result-panel">
             {!result ? (
               <div className="empty-state">
-                Dilekçeniz burada düzenli bir resmi evrak görünümünde
+                Dilekçeniz burada resmi evrak düzenine yakın bir önizleme olarak
                 gösterilecektir.
               </div>
             ) : (
@@ -249,7 +263,11 @@ export default function TrafficPetitionTool() {
                   <p>{result.evaluationComment}</p>
                 </div>
 
-                <h3>Dilekçe</h3>
+                <div className="preview-heading">
+                  <h3>Dilekçe Önizleme</h3>
+                  <p>PDF çıktısına yalnızca dilekçe metni dahil edilir.</p>
+                </div>
+
                 <div className="petition-view">
                   <PetitionDocument petition={result.petition} />
                 </div>
@@ -268,8 +286,8 @@ export default function TrafficPetitionTool() {
           </div>
 
           {result && showPayment ? (
-            <div className="payment-panel" style={{ marginTop: 16 }}>
-              <h3>Ödeme kontrolü</h3>
+            <div className="payment-panel">
+              <h3>Ödeme Kontrolü</h3>
               <p>
                 PDF indirme işlemi ödeme ve yasal onay kontrolüne bağlıdır. Bu
                 alan, iyzico entegrasyonuna hazır placeholder olarak
@@ -277,36 +295,31 @@ export default function TrafficPetitionTool() {
               </p>
 
               <div className="legal-payment-box">
-                <h4>Ön bilgilendirme</h4>
+                <h4>Ön Bilgilendirme</h4>
                 <p>
                   Hizmet, kullanıcı tarafından girilen bilgilere göre dijital
                   dilekçe PDF&apos;i oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir.
                   Teslimat, ödeme sonrası dijital olarak anında yapılır.
                 </p>
 
-                <h4>Ödeme ve teslimat notu</h4>
+                <h4>Ödeme ve Teslimat Notu</h4>
                 <p>
-                  iyzico Checkout Form entegrasyonunda ödeme sonucu
-                  `callbackUrl` üzerinden doğrulanacak ve ödeme sonucu ayrıca
-                  token ile sorgulanacaktır.
+                  iyzico Checkout Form entegrasyonunda ödeme sonucu callback
+                  üzerinden doğrulanacak ve ödeme sonucu ayrıca token ile
+                  sorgulanacaktır.
                 </p>
 
-                <h4>KVKK aydınlatması</h4>
+                <h4>KVKK Aydınlatması</h4>
                 <p>
                   Ad, TCKN, plaka ve başvuru içeriği; dilekçe oluşturma, ödeme
                   doğrulama ve kullanıcı destek süreçleri amacıyla işlenir.
-                  Üretim ortamında veri sorumlusu bilgileri, işleme amaçları,
-                  aktarım grupları ve başvuru hakları ayrı aydınlatma metninde
-                  açıkça gösterilmelidir.
                 </p>
 
-                <h4>Mesafeli sözleşme notu</h4>
+                <h4>Mesafeli Sözleşme Notu</h4>
                 <p>
-                  Ödeme yükümlülüğü doğuran işlem öncesinde kullanıcıya ön
-                  bilgilendirme ve sözleşme onayı gösterilmelidir. Dijital
-                  teslimatın ödeme sonrası anında başlayacağı durumlarda cayma
-                  hakkına ilişkin sonuçlar sözleşmede ayrıca ve açık biçimde
-                  belirtilmelidir.
+                  Dijital teslimatın ödeme sonrası anında başlayacağı
+                  durumlarda cayma hakkına ilişkin sonuçlar sözleşmede açık
+                  biçimde belirtilmelidir.
                 </p>
 
                 <label className="check-row">
@@ -328,7 +341,7 @@ export default function TrafficPetitionTool() {
                 </label>
               </div>
 
-              <div className="payment-actions" style={{ marginTop: 16 }}>
+              <div className="payment-actions">
                 <button
                   type="button"
                   className="primary-button"
@@ -349,9 +362,9 @@ export default function TrafficPetitionTool() {
           <div className="legal-warning">
             <strong>Yasal Uyarı:</strong> Bu site bir avukatlık hizmeti
             vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik
-            olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan dilekçenin
-            hukuki sonuçlarından kullanıcı sorumludur. Hak kaybına uğramamak
-            için bir avukata danışmanız tavsiye edilir.
+            olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan
+            dilekçenin hukuki sonuçlarından kullanıcı sorumludur. Hak kaybına
+            uğramamak için bir avukata danışmanız tavsiye edilir.
           </div>
         </div>
       </div>
