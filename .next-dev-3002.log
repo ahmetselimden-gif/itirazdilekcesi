@@ -1,0 +1,64 @@
+
+> hukuk-dilekce-saas@0.1.0 dev
+> next dev --port 3002
+
+   ▲ Next.js 15.3.1
+   - Local:        http://localhost:3002
+   - Network:      http://192.168.1.64:3002
+
+ ✓ Starting...
+ ✓ Ready in 1810ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.2s (1204 modules)
+ GET / 200 in 7710ms
+ GET / 200 in 83ms
+ GET / 200 in 69ms
+ ○ Compiling /api/generate ...
+ ✓ Compiled /api/generate in 1093ms (1345 modules)
+ POST /api/generate 200 in 1333ms
+ ✓ Compiled in 647ms (1205 modules)
+ GET / 200 in 244ms
+ ✓ Compiled in 450ms (1191 modules)
+ GET / 200 in 214ms
+ ✓ Compiled /_not-found in 417ms (1195 modules)
+ GET /_next/static/webpack/97d8459506377080.webpack.hot-update.json 404 in 655ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.5s (1529 modules)
+ GET /_next/static/webpack/97d8459506377080.webpack.hot-update.json 404 in 1189ms
+ GET / 500 in 3475ms
+ GET / 500 in 1710ms
+ ✓ Compiled in 334ms (765 modules)
+ GET / 200 in 310ms
+ GET /_next/static/css/app/layout.css?v=1774812305300 404 in 54ms
+ GET /_next/static/chunks/main-app.js?v=1774812305300 404 in 139ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 139ms
+ GET /_next/static/chunks/app/layout.js 404 in 137ms
+ GET /_next/static/chunks/app/page.js 404 in 62ms
+ GET / 200 in 60ms
+ GET /_next/static/css/app/layout.css?v=1774812305767 404 in 56ms
+ GET /_next/static/chunks/main-app.js?v=1774812305767 404 in 202ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 204ms
+ GET /_next/static/chunks/app/layout.js 404 in 203ms
+ GET /_next/static/chunks/app/page.js 404 in 202ms
+ GET / 200 in 76ms
+ GET /_next/static/css/app/layout.css?v=1774812308144 404 in 65ms
+ GET /_next/static/chunks/main-app.js?v=1774812308144 404 in 221ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 161ms
+ GET /_next/static/chunks/app/layout.js 404 in 159ms
+ GET /_next/static/chunks/app/page.js 404 in 156ms
+ GET / 200 in 80ms
+ GET /_next/static/css/app/layout.css?v=1774812311381 404 in 62ms
+ GET /_next/static/chunks/main-app.js?v=1774812311381 404 in 204ms
+ GET /_next/static/chunks/app/layout.js 404 in 192ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 195ms
+ GET /_next/static/chunks/app/page.js 404 in 193ms
+ GET / 200 in 77ms
+ GET / 200 in 92ms
+ GET /_next/static/css/app/layout.css?v=1774812327910 404 in 82ms
+ GET /_next/static/chunks/main-app.js?v=1774812327910 404 in 210ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 209ms
+ GET /_next/static/chunks/app/layout.js 404 in 209ms
+ GET /_next/static/chunks/app/page.js 404 in 208ms
+ GET /_next/static/css/app/layout.css?v=1774812319232 404 in 67ms
+ ✓ Compiled in 438ms (765 modules)
+ ✓ Compiled in 230ms (765 modules)

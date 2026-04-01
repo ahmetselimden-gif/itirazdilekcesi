@@ -1,0 +1,84 @@
+
+> hukuk-dilekce-saas@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.1
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.64:3001
+
+ ✓ Starting...
+ ✓ Ready in 1636ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.1s (726 modules)
+ GET / 200 in 4649ms
+ ○ Compiling /[slug] ...
+ ✓ Compiled /[slug] in 1574ms (736 modules)
+ GET /favicon.ico 404 in 2524ms
+ GET /trafik-cezasi 200 in 45ms
+ ○ Compiling /api/generate ...
+ ✓ Compiled /api/generate in 1620ms (893 modules)
+ POST /api/generate 200 in 1872ms
+ ○ Compiling /payment ...
+ ✓ Compiled /payment in 3.7s (1371 modules)
+ GET /payment?category=trafik-cezasi 200 in 4291ms
+ GET /payment?category=trafik-cezasi 200 in 38ms
+ GET /isci-dilekcesi 200 in 73ms
+ ○ Compiling /_error ...
+ GET / 500 in 7483ms
+ GET / 500 in 26ms
+ GET / 500 in 32ms
+ GET / 500 in 23ms
+ GET / 500 in 23ms
+ GET / 500 in 25ms
+ ✓ Compiled /_not-found in 1186ms (1529 modules)
+ GET /_next/static/webpack/19295e23fa3e7f4f.webpack.hot-update.json 404 in 1579ms
+ GET / 200 in 172ms
+ GET / 200 in 138ms
+ ✓ Compiled in 557ms (1539 modules)
+ GET / 200 in 88ms
+ GET / 200 in 149ms
+ GET / 200 in 55ms
+ GET / 200 in 56ms
+ ✓ Compiled /_not-found in 503ms (1529 modules)
+ GET /_next/static/css/app/layout.css?v=1774811111222 404 in 733ms
+ GET /_next/static/chunks/webpack.js?v=1774811111222 404 in 815ms
+ GET / 500 in 594ms
+ GET /_next/static/chunks/main-app.js?v=1774811111222 404 in 368ms
+ GET /_next/static/chunks/app/layout.js 404 in 366ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 369ms
+ GET /_next/static/chunks/app/page.js 404 in 365ms
+ GET / 500 in 77ms
+ GET /_next/static/chunks/fallback/main.js 404 in 281ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 279ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 286ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 275ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 275ms
+ GET / 500 in 94ms
+ GET /_next/static/chunks/fallback/main.js 404 in 258ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 256ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 255ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 255ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 254ms
+ GET / 500 in 81ms
+ GET /_next/static/chunks/fallback/main.js 404 in 239ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 237ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 235ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 243ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 239ms
+ GET / 500 in 123ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 250ms
+ GET /_next/static/chunks/fallback/main.js 404 in 249ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 247ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 242ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 245ms
+ GET / 500 in 78ms
+ GET /_next/static/chunks/fallback/webpack.js 404 in 277ms
+ GET /_next/static/chunks/fallback/main.js 404 in 275ms
+ GET /_next/static/chunks/fallback/react-refresh.js 404 in 274ms
+ GET /_next/static/chunks/fallback/pages/_app.js 404 in 274ms
+ GET /_next/static/chunks/fallback/pages/_error.js 404 in 272ms
+ ✓ Compiled in 539ms (764 modules)
+ ✓ Compiled in 597ms (1539 modules)
+ ✓ Compiled in 515ms (1525 modules)
+ ✓ Compiled in 279ms (764 modules)
+ ✓ Compiled in 376ms (764 modules)

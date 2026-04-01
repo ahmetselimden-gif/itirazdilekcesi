@@ -1,0 +1,23 @@
+
+> hukuk-dilekce-saas@0.1.0 dev
+> next dev --port 3004
+
+   ▲ Next.js 15.3.1
+   - Local:        http://localhost:3004
+   - Network:      http://192.168.1.64:3004
+
+ ✓ Starting...
+ ✓ Ready in 1793ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.4s (1205 modules)
+ GET / 200 in 4900ms
+ GET / 200 in 87ms
+ ○ Compiling /api/generate ...
+ ✓ Compiled /api/generate in 824ms (1346 modules)
+ POST /api/generate 200 in 1017ms
+ ✓ Compiled in 898ms (1208 modules)
+ GET / 200 in 174ms
+ ✓ Compiled in 601ms (1208 modules)
+ GET / 200 in 163ms
+ ✓ Compiled in 948ms (1208 modules)
+ ✓ Compiled in 294ms (515 modules)

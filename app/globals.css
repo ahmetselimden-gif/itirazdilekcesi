@@ -1,0 +1,569 @@
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --text: #162033;
+  --muted: #4e5b70;
+  --line: #d9e1ea;
+  --navy: #102542;
+  --navy-soft: #eaf0f7;
+  --container: 1040px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: min(var(--container), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.page-content {
+  flex: 1;
+  padding: 32px 0 64px;
+}
+
+.single-page {
+  display: grid;
+  gap: 28px;
+}
+
+.hero-section,
+.tool-shell,
+.news-block,
+.seo-block,
+.form-panel,
+.result-panel,
+.payment-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.hero-section {
+  padding: 36px 40px;
+  text-align: center;
+}
+
+.official-mark {
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--navy);
+  font-size: 1.9rem;
+  margin-bottom: 12px;
+}
+
+.hero-section h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  color: var(--navy);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.hero-subtitle {
+  margin: 14px auto 0;
+  max-width: 640px;
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.seo-section {
+  display: grid;
+  gap: 16px;
+}
+
+.news-block,
+.seo-block {
+  padding: 24px 26px;
+}
+
+.news-block h2,
+.seo-block h2,
+.tool-heading h2,
+.result-panel h3,
+.payment-panel h3 {
+  margin: 0 0 12px;
+  color: var(--navy);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.seo-block p,
+.news-item p,
+.tool-heading p,
+.evaluation-box p,
+.payment-panel p,
+.empty-state,
+.footer-inner,
+.message {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.news-list {
+  display: grid;
+  gap: 18px;
+}
+
+.news-item {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.news-item:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.news-item h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  color: var(--navy);
+}
+
+.news-item a:hover {
+  text-decoration: underline;
+}
+
+.tool-shell {
+  padding: 28px 24px;
+}
+
+.tool-heading {
+  margin-bottom: 20px;
+}
+
+.tool-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.form-panel,
+.result-panel,
+.payment-panel {
+  padding: 22px;
+}
+
+.legal-form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 0.95rem;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.field-note {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #c8d2de;
+  background: #fff;
+  color: var(--text);
+  border-radius: 0;
+}
+
+.field textarea {
+  min-height: 170px;
+  resize: vertical;
+}
+
+.tool-actions,
+.payment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.primary-button,
+.secondary-button {
+  border: 1px solid var(--navy);
+  padding: 13px 18px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  border-radius: 0;
+}
+
+.primary-button {
+  background: var(--navy);
+  color: #fff;
+}
+
+.secondary-button {
+  background: #fff;
+  color: var(--navy);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.result-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.evaluation-box {
+  border: 1px solid var(--line);
+  background: var(--navy-soft);
+  padding: 18px;
+}
+
+.evaluation-box h4 {
+  margin: 0 0 12px;
+  color: var(--navy);
+  font-size: 1rem;
+}
+
+.evaluation-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+  color: var(--navy);
+}
+
+.petition-view {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 24px;
+  min-height: 460px;
+  overflow-x: hidden;
+}
+
+.petition-document {
+  font-family: "Times New Roman", Times, serif;
+  color: #111;
+  font-size: 11pt;
+  line-height: 1.6;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.petition-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.petition-header-title {
+  font-weight: 700;
+  font-size: 14pt;
+  margin-bottom: 6px;
+}
+
+.petition-header-institution {
+  font-weight: 700;
+  font-size: 12.5pt;
+  text-transform: uppercase;
+  line-height: 1.28;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.petition-body {
+  width: 100%;
+  padding-right: 4mm;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.petition-line,
+.petition-section-title {
+  margin: 0 0 8px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+
+.petition-section-title {
+  font-size: 11pt;
+  font-weight: 700;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.petition-gap {
+  height: 6px;
+}
+
+.petition-subject {
+  text-align: left;
+}
+
+.petition-signature-line {
+  text-align: right;
+}
+
+.empty-state {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.message.error {
+  border-color: #e3c8c8;
+  color: #8f2d2d;
+  background: #fff7f7;
+}
+
+.pdf-stage {
+  position: absolute;
+  left: -99999px;
+  top: 0;
+  width: 794px;
+}
+
+.pdf-document {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.pdf-paper {
+  background: #fff;
+  color: #000;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 15mm 20mm 15mm 13mm;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.pdf-paper .petition-document {
+  max-width: 155mm;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.pdf-paper .petition-body {
+  padding-right: 0;
+}
+
+.legal-payment-box {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: #fafbfd;
+  display: grid;
+  gap: 10px;
+}
+
+.legal-payment-box h4 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 0.98rem;
+}
+
+.legal-payment-box p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.check-row input {
+  margin-top: 3px;
+}
+
+.legal-warning {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #d8dee8;
+  background: #f8fafc;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.legal-warning strong {
+  color: var(--navy);
+}
+
+.footer {
+  background: #fff;
+  border-top: 1px solid var(--line);
+}
+
+.footer-inner {
+  padding: 24px 0 32px;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+  margin-bottom: 16px;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-company {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.footer-company p,
+.footer-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.legal-page {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 28px 30px;
+}
+
+.legal-page h1,
+.legal-page h2 {
+  color: var(--navy);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.legal-page h1 {
+  margin: 0 0 16px;
+}
+
+.legal-page h2 {
+  margin: 24px 0 10px;
+  font-size: 1.15rem;
+}
+
+.legal-page p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+  .tool-layout,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section,
+  .tool-shell,
+  .news-block,
+  .seo-block,
+  .form-panel,
+  .result-panel,
+  .payment-panel {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .petition-view {
+    padding: 18px;
+  }
+
+  .legal-page {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
