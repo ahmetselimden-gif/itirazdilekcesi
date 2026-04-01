@@ -28,8 +28,8 @@ const defaultPaymentForm = {
   address: "",
 };
 
-const SNAPSHOT_KEY = "petition_checkout_snapshot_v1";
-const ACCESS_TOKEN_KEY = "petition_payment_access_v1";
+const SNAPSHOT_KEY = "petition_checkout_snapshot_v2";
+const ACCESS_TOKEN_KEY = "petition_payment_access_v2";
 
 const fieldClassName =
   "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
@@ -40,9 +40,11 @@ const textareaClassName =
 const primaryButtonClassName =
   "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
 
+type ResultWithToken = TrafficGenerationResult & { petitionToken?: string };
+
 type SnapshotPayload = {
   form: TrafficFormData;
-  result: TrafficGenerationResult;
+  result: ResultWithToken;
   paymentForm: typeof defaultPaymentForm;
   showPayment: boolean;
 };
@@ -65,7 +67,7 @@ export default function TrafficPetitionTool() {
 
   const [form, setForm] = useState<TrafficFormData>(defaultForm);
   const [paymentForm, setPaymentForm] = useState(defaultPaymentForm);
-  const [result, setResult] = useState<TrafficGenerationResult | null>(null);
+  const [result, setResult] = useState<ResultWithToken | null>(null);
   const [error, setError] = useState("");
   const [paymentError, setPaymentError] = useState("");
   const [paymentStatusMessage, setPaymentStatusMessage] = useState("");
@@ -116,6 +118,10 @@ export default function TrafficPetitionTool() {
       return "İyzico için TCKN alanı 11 haneli olmalıdır.";
     }
 
+    if (!result?.petitionToken) {
+      return "Dilekçe güvenlik belirteci oluşturulamadı. Lütfen metni yeniden üretin.";
+    }
+
     return "";
   };
 
@@ -139,7 +145,8 @@ export default function TrafficPetitionTool() {
 
     const params = new URLSearchParams(window.location.search);
     const payment = params.get("payment");
-    const access = params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    const access =
+      params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
     const message = params.get("message");
 
     if (message) {
@@ -224,9 +231,7 @@ export default function TrafficPetitionTool() {
         body: JSON.stringify(form),
       });
 
-      const data = (await response.json()) as
-        | TrafficGenerationResult
-        | { error?: string };
+      const data = (await response.json()) as ResultWithToken | { error?: string };
 
       if (!response.ok) {
         throw new Error(
@@ -276,6 +281,7 @@ export default function TrafficPetitionTool() {
           phone: paymentForm.phone,
           city: paymentForm.city,
           address: paymentForm.address,
+          petitionToken: result?.petitionToken,
         }),
       });
 
@@ -655,10 +661,10 @@ export default function TrafficPetitionTool() {
                   {isPaymentLoading ? "İyzico yönlendiriliyor..." : "İyzico ile öde"}
                 </button>
                 <PdfDownloadButton
-                  elementId="petition-pdf-document"
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
                   accessToken={paymentAccessToken}
-                  disabled={!paymentReady || !paymentAccessToken}
+                  petitionToken={result.petitionToken}
+                  disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}
                 />
               </div>
             </div>
@@ -667,12 +673,6 @@ export default function TrafficPetitionTool() {
           <div className="rounded-[20px] border border-gold/45 bg-gold-soft/45 px-5 py-4 text-sm leading-7 text-muted">
             <strong className="text-navy">Yasal Uyarı:</strong> Bu site bir avukatlık hizmeti vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan dilekçenin hukuki sonuçlarından kullanıcı sorumludur. Hak kaybına uğramamak için bir avukata danışmanız tavsiye edilir.
           </div>
-        </div>
-      </div>
-
-      <div className="pdf-stage" aria-hidden="true">
-        <div id="petition-pdf-document" className="pdf-document">
-          <div className="pdf-paper">{result ? <PetitionDocument petition={result.petition} /> : null}</div>
         </div>
       </div>
     </section>

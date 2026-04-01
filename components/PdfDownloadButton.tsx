@@ -1,52 +1,43 @@
 "use client";
 
 type PdfDownloadButtonProps = {
-  elementId: string;
   fileName: string;
   disabled?: boolean;
   accessToken?: string;
+  petitionToken?: string;
 };
 
 const buttonClassName =
   "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-surface px-5 text-sm font-bold text-navy transition duration-200 hover:-translate-y-0.5 hover:bg-navy hover:text-white disabled:cursor-not-allowed disabled:opacity-55";
 
 export default function PdfDownloadButton({
-  elementId,
   fileName,
   disabled = false,
   accessToken = "",
+  petitionToken = "",
 }: PdfDownloadButtonProps) {
   const handleDownload = async () => {
-    if (disabled || !accessToken) {
+    if (disabled || !accessToken || !petitionToken) {
       return;
     }
 
-    const verification = await fetch(
-      `/api/payments/access?token=${encodeURIComponent(accessToken)}`
+    const response = await fetch(
+      `/api/payments/download?access=${encodeURIComponent(accessToken)}&petition=${encodeURIComponent(petitionToken)}`
     );
 
-    if (!verification.ok) {
+    if (!response.ok) {
       return;
     }
 
-    const target = document.getElementById(elementId);
-
-    if (!target) {
-      return;
-    }
-
-    const html2pdf = (await import("html2pdf.js")).default;
-
-    await html2pdf()
-      .set({
-        margin: [15, 15, 15, 15],
-        filename: fileName,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      })
-      .from(target)
-      .save();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.URL.revokeObjectURL(url);
   };
 
   return (

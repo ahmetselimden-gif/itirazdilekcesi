@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createDownloadAccessToken } from "@/lib/downloadAccess";
 import { retrieveCheckoutForm } from "@/lib/iyzico";
+import { verifyPetitionToken } from "@/lib/petitionToken";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -18,6 +19,9 @@ function buildReturnUrl(searchParams: URLSearchParams) {
 
 export async function POST(request: Request) {
   try {
+    const requestUrl = new URL(request.url);
+    const petitionToken = requestUrl.searchParams.get("petition") || "";
+    const buyerEmail = requestUrl.searchParams.get("email") || "";
     const formData = await request.formData();
     const token = String(formData.get("token") || "");
     const conversationId = String(formData.get("conversationId") || "");
@@ -26,7 +30,18 @@ export async function POST(request: Request) {
       const failedUrl = buildReturnUrl(
         new URLSearchParams({
           payment: "failed",
-          message: "Odeme sonucu alinamadi.",
+          message: "Ödeme sonucu alınamadı.",
+        })
+      );
+      return NextResponse.redirect(failedUrl, 303);
+    }
+
+    const petitionVerification = verifyPetitionToken(petitionToken);
+    if (!petitionVerification.valid) {
+      const failedUrl = buildReturnUrl(
+        new URLSearchParams({
+          payment: "failed",
+          message: petitionVerification.reason,
         })
       );
       return NextResponse.redirect(failedUrl, 303);
@@ -38,7 +53,7 @@ export async function POST(request: Request) {
       const failedUrl = buildReturnUrl(
         new URLSearchParams({
           payment: "failed",
-          message: result.errorMessage || "Odeme dogrulanamadi.",
+          message: result.errorMessage || "Ödeme doğrulanamadı.",
         })
       );
       return NextResponse.redirect(failedUrl, 303);
@@ -47,7 +62,7 @@ export async function POST(request: Request) {
     const accessToken = createDownloadAccessToken({
       orderId: String(result.paymentId || result.basketId || token),
       conversationId: result.conversationId || conversationId || "petition-payment",
-      email: String(formData.get("buyerEmail") || ""),
+      email: buyerEmail,
       paidPrice: String(result.paidPrice || result.price || "19.99"),
     });
 
@@ -63,7 +78,7 @@ export async function POST(request: Request) {
     const failedUrl = buildReturnUrl(
       new URLSearchParams({
         payment: "failed",
-        message: "Odeme sonucu islenirken hata olustu.",
+        message: "Ödeme sonucu işlenirken hata oluştu.",
       })
     );
     return NextResponse.redirect(failedUrl, 303);

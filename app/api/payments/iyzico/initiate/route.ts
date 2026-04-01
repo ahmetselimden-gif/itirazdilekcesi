@@ -4,6 +4,7 @@ import {
   getCallbackUrl,
   initializeCheckoutForm,
 } from "@/lib/iyzico";
+import { verifyPetitionToken } from "@/lib/petitionToken";
 import { isTrustedOrigin } from "@/lib/requestSecurity";
 
 export const runtime = "nodejs";
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
       phone?: string;
       address?: string;
       city?: string;
+      petitionToken?: string;
     };
 
     const fullName = body.fullName?.trim() || "";
@@ -35,10 +37,11 @@ export async function POST(request: Request) {
     const address = body.address?.trim() || "";
     const city = body.city?.trim() || "";
     const tckn = body.tckn?.trim() || "";
+    const petitionToken = body.petitionToken?.trim() || "";
 
-    if (!fullName || !email || !phone || !address || !city) {
+    if (!fullName || !email || !phone || !address || !city || !petitionToken) {
       return NextResponse.json(
-        { error: "Ödeme için ad soyad, e-posta, telefon, adres ve şehir gereklidir." },
+        { error: "Ödeme için gerekli tüm alanlar ve dilekçe belirteci gereklidir." },
         { status: 400 }
       );
     }
@@ -51,10 +54,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "TCKN 11 haneli olmalıdır." }, { status: 400 });
     }
 
+    const petitionVerification = verifyPetitionToken(petitionToken);
+    if (!petitionVerification.valid) {
+      return NextResponse.json(
+        { error: petitionVerification.reason },
+        { status: 401 }
+      );
+    }
+
     const conversationId = buildConversationId();
+    const callbackUrl = new URL(getCallbackUrl());
+    callbackUrl.searchParams.set("petition", petitionToken);
+    callbackUrl.searchParams.set("email", email);
+
     const response = await initializeCheckoutForm({
       conversationId,
-      callbackUrl: getCallbackUrl(),
+      callbackUrl: callbackUrl.toString(),
       buyer: {
         fullName,
         tckn,

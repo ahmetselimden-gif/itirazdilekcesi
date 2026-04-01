@@ -5,6 +5,7 @@ import {
   buildTrafficPrompt,
   type TrafficFormData,
 } from "@/lib/trafficPetition";
+import { createPetitionToken } from "@/lib/petitionToken";
 import {
   checkRateLimit,
   isTrustedOrigin,
@@ -13,6 +14,10 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+function withPetitionToken(petition: string, fullName: string) {
+  return createPetitionToken(petition, fullName);
+}
 
 export async function POST(request: Request) {
   try {
@@ -87,7 +92,10 @@ export async function POST(request: Request) {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
-      return NextResponse.json(fallbackResult);
+      return NextResponse.json({
+        ...fallbackResult,
+        petitionToken: withPetitionToken(fallbackResult.petition, payload.fullName),
+      });
     }
 
     try {
@@ -101,7 +109,10 @@ export async function POST(request: Request) {
 
       const rawText = response.output_text?.trim();
       if (!rawText) {
-        return NextResponse.json(fallbackResult);
+        return NextResponse.json({
+          ...fallbackResult,
+          petitionToken: withPetitionToken(fallbackResult.petition, payload.fullName),
+        });
       }
 
       const parsed = JSON.parse(rawText) as {
@@ -115,30 +126,42 @@ export async function POST(request: Request) {
         !parsed.evaluationLevel ||
         !parsed.evaluationComment
       ) {
-        return NextResponse.json(fallbackResult);
+        return NextResponse.json({
+          ...fallbackResult,
+          petitionToken: withPetitionToken(fallbackResult.petition, payload.fullName),
+        });
       }
 
+      const petition = parsed.petition.trim();
+
       return NextResponse.json({
-        petition: parsed.petition.trim(),
+        petition,
         evaluationLevel: parsed.evaluationLevel,
         evaluationComment: parsed.evaluationComment.trim(),
         source: "openai",
+        petitionToken: withPetitionToken(petition, payload.fullName),
       });
     } catch (openAiError) {
       console.error("OpenAI generation failed, fallback returned:", openAiError);
-      return NextResponse.json(fallbackResult);
+      return NextResponse.json({
+        ...fallbackResult,
+        petitionToken: withPetitionToken(fallbackResult.petition, payload.fullName),
+      });
     }
   } catch (error) {
     console.error("Route failed before generation, using emergency fallback:", error);
 
+    const emergencyPetition =
+      "T.C.\nNÖBETÇİ SULH CEZA HÂKİMLİĞİ'NE\n\nKONU: Trafik idari para cezasına itiraz ve iptal istemidir.\n\nBaşvuran Bilgileri\nAd Soyad: [Bilgi alınamadı]\n\nAçıklamalar\nBaşvuru işlenirken teknik bir hata oluşmuştur. Kullanıcının verileri tekrar alınarak yeniden değerlendirme yapılması gerekmektedir.\n\nHukuki Nedenler\nKarayolları Trafik Kanunu, İdari Yargılama Usulü Kanunu ve ilgili mevzuat.\n\nSonuç ve İstem\nHukuka aykırı olduğu değerlendirilen idari para cezasının iptaline karar verilmesini saygılarımla arz ve talep ederim.\n\nTarih: .... / .... / ........\nİmza: [Başvuran]";
+
     return NextResponse.json(
       {
-        petition:
-          "T.C.\nNÖBETÇİ SULH CEZA HÂKİMLİĞİ'NE\n\nKONU: Trafik idari para cezasına itiraz ve iptal istemidir.\n\nBaşvuran Bilgileri\nAd Soyad: [Bilgi alınamadı]\n\nAçıklamalar\nBaşvuru işlenirken teknik bir hata oluşmuştur. Kullanıcının verileri tekrar alınarak yeniden değerlendirme yapılması gerekmektedir.\n\nHukuki Nedenler\nKarayolları Trafik Kanunu, İdari Yargılama Usulü Kanunu ve ilgili mevzuat.\n\nSonuç ve İstem\nHukuka aykırı olduğu değerlendirilen idari para cezasının iptaline karar verilmesini saygılarımla arz ve talep ederim.\n\nTarih: .... / .... / ........\nİmza: [Başvuran]",
+        petition: emergencyPetition,
         evaluationLevel: "Orta",
         evaluationComment:
           "Teknik nedenle yedek dilekçe metni üretildi. Form bilgileri yeniden gönderildiğinde daha ayrıntılı metin oluşturulabilir.",
         source: "fallback",
+        petitionToken: withPetitionToken(emergencyPetition, "Başvuran"),
       },
       { status: 200 }
     );

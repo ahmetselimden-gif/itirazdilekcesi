@@ -16,6 +16,7 @@ export type TrafficGenerationResult = {
   evaluationLevel: "Düşük" | "Orta" | "Yüksek";
   evaluationComment: string;
   source: "openai" | "fallback";
+  petitionToken?: string;
 };
 
 function toTurkishUppercase(value: string) {
