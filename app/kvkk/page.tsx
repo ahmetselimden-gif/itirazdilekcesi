@@ -7,7 +7,10 @@ export default function KvkkPage() {
         kapsamında hazırlanmıştır.
       </p>
 
-      <h2>İletişim</h2>
+      <h2>Veri Sorumlusu ve İletişim</h2>
+      <p>Ahmet Selim Baltaş</p>
+      <p>Adres: Fatih Mah. Sümer Cad. No: 9 Sultanbeyli / İstanbul</p>
+      <p>Telefon: 0506 102 14 01</p>
       <p>Destek e-posta adresi: destek@itirazdilekcesi.com</p>
 
       <h2>İşlenen Veriler</h2>

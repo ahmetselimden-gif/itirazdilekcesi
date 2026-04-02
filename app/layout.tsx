@@ -102,8 +102,8 @@ export default function RootLayout({
           </main>
 
           <footer className="border-t border-line/80 bg-[rgba(255,253,248,0.95)]">
-            <div className="mx-auto w-full max-w-7xl px-4 py-10 text-center sm:px-6 lg:px-8">
-              <div className="mb-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold text-navy">
+            <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+              <div className="mb-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold text-navy">
                 <Link
                   href="/mesafeli-satis-sozlesmesi"
                   className="transition hover:text-navy-deep hover:underline"
@@ -121,8 +121,40 @@ export default function RootLayout({
                 </Link>
               </div>
 
-              <p className="mb-3 text-sm text-muted">Destek için: destek@itirazdilekcesi.com</p>
-              <p className="mx-auto max-w-3xl text-sm leading-7 text-muted">
+              <div className="mx-auto grid max-w-4xl gap-4 rounded-[22px] border border-line/80 bg-surface px-5 py-5 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                    Satıcı
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-muted">Ahmet Selim Baltaş</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                    Adres
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-muted">
+                    Fatih Mah. Sümer Cad. No: 9
+                    <br />
+                    Sultanbeyli / İstanbul
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                    Telefon
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-muted">0506 102 14 01</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
+                    Destek
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-muted">
+                    destek@itirazdilekcesi.com
+                  </p>
+                </div>
+              </div>
+
+              <p className="mx-auto mt-5 max-w-3xl text-center text-sm leading-7 text-muted">
                 Bu platform yalnızca örnek dilekçe oluşturur. Hukuki danışmanlık vermez.
               </p>
             </div>

@@ -9,7 +9,9 @@ export default function DistanceSalesPage() {
       </p>
 
       <h2>1. Taraflar</h2>
-      <p>Satıcı: Dijital hizmet sağlayıcı</p>
+      <p>Satıcı: Ahmet Selim Baltaş</p>
+      <p>Adres: Fatih Mah. Sümer Cad. No: 9 Sultanbeyli / İstanbul</p>
+      <p>Telefon: 0506 102 14 01</p>
       <p>E-posta: destek@itirazdilekcesi.com</p>
       <p>Alıcı: Sipariş formunu dolduran kullanıcıdır.</p>
 
@@ -30,8 +32,8 @@ export default function DistanceSalesPage() {
       <h2>4. Ücret ve Ödeme</h2>
       <p>
         Hizmet bedeli ödeme ekranında belirtilen 19,99 TL tutardır. Ödeme,
-        iyzico veya entegre ödeme altyapısı üzerinden tahsil edilir. Ödeme
-        onayı sonrası dijital içerik alıcıya anında sunulur.
+        entegre ödeme altyapısı üzerinden tahsil edilir. Ödeme onayı sonrası
+        dijital içerik alıcıya anında sunulur.
       </p>
 
       <h2>5. Teslimat</h2>
