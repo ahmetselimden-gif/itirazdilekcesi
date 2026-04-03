@@ -11,6 +11,7 @@ import {
   isTrustedOrigin,
   sanitizeTrafficPayload,
 } from "@/lib/requestSecurity";
+import { isTurnstileEnabled, validateTurnstileToken } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,7 +45,31 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = (await request.json()) as Partial<TrafficFormData>;
+    const body = (await request.json()) as Partial<TrafficFormData> & {
+      turnstileToken?: string;
+    };
+
+    if (isTurnstileEnabled()) {
+      const turnstileToken = body.turnstileToken?.trim() || "";
+      if (!turnstileToken) {
+        return NextResponse.json(
+          { error: "Lütfen güvenlik doğrulamasını tamamlayın." },
+          { status: 400 }
+        );
+      }
+
+      const forwardedFor = request.headers.get("x-forwarded-for");
+      const remoteip = forwardedFor?.split(",")[0]?.trim();
+      const verification = await validateTurnstileToken(turnstileToken, remoteip);
+
+      if (!verification.success) {
+        return NextResponse.json(
+          { error: "Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin." },
+          { status: 400 }
+        );
+      }
+    }
+
     const payload = sanitizeTrafficPayload({
       fullName: body.fullName?.trim() || "",
       tckn: body.tckn?.trim() || "",

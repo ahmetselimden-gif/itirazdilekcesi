@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useId, useState } from "react";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import PetitionDocument from "@/components/PetitionDocument";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import type {
   TrafficFormData,
   TrafficGenerationResult,
@@ -28,6 +29,7 @@ const defaultPaymentForm = {
 
 const SNAPSHOT_KEY = "petition_checkout_snapshot_v2";
 const ACCESS_TOKEN_KEY = "petition_payment_access_v2";
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const fieldClassName =
   "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
@@ -74,6 +76,7 @@ export default function TrafficPetitionTool() {
   const [paymentAccessToken, setPaymentAccessToken] = useState("");
   const [approvalInfo, setApprovalInfo] = useState(false);
   const [approvalKvkk, setApprovalKvkk] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const updateField = (key: keyof TrafficFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -218,13 +221,22 @@ export default function TrafficPetitionTool() {
       return;
     }
 
+    if (turnstileSiteKey && !turnstileToken) {
+      setError("Lütfen güvenlik doğrulamasını tamamlayın.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          turnstileToken,
+        }),
       });
 
       const data = (await response.json()) as ResultWithToken | { error?: string };
@@ -239,6 +251,7 @@ export default function TrafficPetitionTool() {
 
       setResult(data);
       window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      setTurnstileToken("");
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -499,6 +512,15 @@ export default function TrafficPetitionTool() {
                 {isLoading ? "Dilekçe hazırlanıyor..." : "Dilekçeyi Gör"}
               </button>
             </div>
+
+            <TurnstileWidget
+              siteKey={turnstileSiteKey}
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                setError("");
+              }}
+              onExpire={() => setTurnstileToken("")}
+            />
 
             {error ? (
               <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-danger">
