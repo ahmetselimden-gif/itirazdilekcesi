@@ -208,6 +208,56 @@ export default function HomePage() {
             <div className="mb-5">
               <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
                 <span className="h-px w-8 bg-navy/30" />
+                Başvuru Kılavuzu
+              </span>
+              <h2 className="mt-3 font-display text-3xl text-navy-deep">
+                Hazırlanan dilekçe nereye verilir?
+              </h2>
+            </div>
+
+            <div className="grid gap-5 lg:grid-cols-3">
+              <div className="rounded-[20px] border border-line bg-surface-soft p-5">
+                <p className="text-sm font-bold text-navy">1. Doğru merciyi kontrol edin</p>
+                <p className="mt-3 text-[15px] leading-8 text-muted">
+                  Trafik idari para cezalarına karşı başvuru uygulamada çoğu durumda sulh ceza
+                  hâkimliğine yapılır. Özellikle cezanın düzenlendiği yer ve tebligat bilgileri,
+                  başvurunun nereye sunulacağını belirlemede önem taşır.
+                </p>
+              </div>
+
+              <div className="rounded-[20px] border border-line bg-surface-soft p-5">
+                <p className="text-sm font-bold text-navy">2. Adliyeden teslim edebilirsiniz</p>
+                <p className="mt-3 text-[15px] leading-8 text-muted">
+                  Hazırladığınız dilekçeyi imzalayıp ekleriyle birlikte adliyedeki ilgili birime
+                  teslim edebilirsiniz. Uygulamada başvuru çoğu zaman sulh ceza hâkimliği kalemine
+                  ya da adliye ön büro/tevzi birimi üzerinden alınır.
+                </p>
+              </div>
+
+              <div className="rounded-[20px] border border-line bg-surface-soft p-5">
+                <p className="text-sm font-bold text-navy">3. Dijital başvuru imkânını araştırın</p>
+                <p className="mt-3 text-[15px] leading-8 text-muted">
+                  Bazı işlemler UYAP üzerinden de takip edilebilir. UYAP Vatandaş Portal veya
+                  avukat aracılığıyla başvuru imkânı bulunup bulunmadığını, işlem yapmadan önce
+                  ilgili adliye veya portal üzerinden kontrol etmek faydalı olur.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 rounded-[20px] border border-gold/45 bg-gold-soft/40 p-5">
+              <p className="text-[15px] leading-8 text-muted">
+                Pratik öneri: Dilekçeyi vermeden önce cezanın yazıldığı yer, tebliğ tarihi ve
+                başvurunun hangi sulh ceza hâkimliğine yöneltileceği konusunda ilgili adliye
+                kaleminden teyit almak güvenli olur. Böylece yanlış birime başvuru nedeniyle süre
+                kaybı yaşama ihtimali azalır.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+            <div className="mb-5">
+              <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
+                <span className="h-px w-8 bg-navy/30" />
                 Gündem
               </span>
               <h2 className="mt-3 font-display text-3xl text-navy-deep">
