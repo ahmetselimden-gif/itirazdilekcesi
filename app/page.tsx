@@ -143,10 +143,14 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="max-w-5xl text-[15px] leading-8 text-muted">
-              Trafik cezalarına itiraz edilirken cezanın dayandığı tespit, tutanak
-              içeriği, tebliğ süreci, radar veya kamera kaydı gibi unsurlar dikkatle
-              değerlendirilmelidir. Somut olayın açık biçimde ortaya konulamaması,
-              delil eksikliği veya usul hatası gibi durumlar itirazı güçlendirebilir.
+              Trafik cezasına itiraz edilirken önce cezanın hangi tutanak veya teknik
+              tespite dayandığı incelenmelidir. Tutanakta araç, yer, tarih, saat ve
+              fiilin niteliği açık değilse; radar veya kamera kaydı bulunmuyorsa;
+              tebligat usulüne uygun yapılmadıysa ya da olayın gerçekleşme biçimi ile
+              tutanak arasında çelişki varsa itiraz imkânı güçlenebilir. Başvuru
+              yapılırken yalnızca “ceza haksız” denilmesi yerine, delil eksikliği, usul
+              hatası, yanlış plaka, yanlış yer, hatalı tarih veya yetersiz açıklama gibi
+              somut noktaların belirtilmesi daha güçlü sonuç verir.
             </p>
           </div>
 
@@ -160,10 +164,18 @@ export default function HomePage() {
                 İtiraz süresi kaç gün?
               </h2>
               <p className="mt-4 text-[15px] leading-8 text-muted">
-                Trafik cezası itirazlarında tebliğ tarihi kritik önem taşır. Bu nedenle
-                ceza tarihi ile birlikte tebliğ tarihinin de doğru girilmesi gerekir.
-                Başvuru süresi yönünden hak kaybı yaşamamak için tarihlerin net ve
-                eksiksiz olması önemlidir.
+                Trafik idari para cezalarına karşı başvuru süresi genel olarak tebliğ
+                tarihinden itibaren 15 gündür. Uygulamada esas alınan kritik tarih, cezanın
+                yazıldığı gün değil, cezanın size usulüne uygun biçimde tebliğ edildiği
+                gündür. Bu nedenle sistemde tebliğ tarihinin doğru girilmesi çok önemlidir.
+                Süre geçirilirse ceza kesinleşebilir; bu yüzden başvurunun mümkün olan en
+                kısa sürede hazırlanması gerekir.
+              </p>
+              <p className="mt-4 text-[15px] leading-8 text-muted">
+                Eğer ceza tutanağı sonradan adresinize geldiyse, süre çoğu durumda tebliğ
+                ile başlar. Tebligat usulsüzse veya hiç yapılmadıysa değerlendirme değişebilir.
+                Bu sebeple tebligatın size nasıl ulaştığını ve hangi tarihte teslim edildiğini
+                doğru yazmanız hak kaybı yaşamamanız açısından önem taşır.
               </p>
             </div>
 
@@ -176,10 +188,18 @@ export default function HomePage() {
                 Hangi durumlarda iptal olur?
               </h2>
               <p className="mt-4 text-[15px] leading-8 text-muted">
-                Yanlış plaka, eksik tutanak bilgisi, delil yetersizliği, kamera veya
-                radar kaydının bulunmaması, olay yerinin belirsizliği ya da tebliğ
-                usulüne aykırılık gibi durumlar itiraz bakımından önemli olabilir. Her
-                dosya kendi koşullarına göre değerlendirilmelidir.
+                Her dosya kendi içinde değerlendirilse de uygulamada bazı itiraz sebepleri
+                daha sık öne çıkar. Yanlış plaka yazılması, olay yerinin veya saatinin tutanakta
+                hatalı görünmesi, cezanın hangi delile dayandığının belirsiz olması, kamera veya
+                radar kaydının sunulmaması, ölçüm cihazının kalibrasyonunun tartışmalı olması ve
+                tebligat sürecindeki usulsüzlükler en sık ileri sürülen nedenler arasındadır.
+              </p>
+              <p className="mt-4 text-[15px] leading-8 text-muted">
+                Özellikle kırmızı ışık ve hız ihlali cezalarında teknik delil önemli yer tutar.
+                Park cezalarında ise aracın bulunduğu yerin doğru tespiti, tutanak içeriği ve
+                fotoğraf desteği daha çok önem kazanır. Dilekçede olayın neden hatalı tespit
+                edildiğini kısa ama açık şekilde anlatmak, itirazın daha düzenli ve ikna edici
+                görünmesini sağlar.
               </p>
             </div>
           </div>
