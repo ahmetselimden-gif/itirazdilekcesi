@@ -22,11 +22,6 @@ const defaultForm: TrafficFormData = {
   explanation: "",
 };
 
-const defaultPaymentForm = {
-  email: "",
-  phone: "",
-};
-
 const SNAPSHOT_KEY = "petition_checkout_snapshot_v2";
 const ACCESS_TOKEN_KEY = "petition_payment_access_v2";
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -45,7 +40,6 @@ type ResultWithToken = TrafficGenerationResult & { petitionToken?: string };
 type SnapshotPayload = {
   form: TrafficFormData;
   result: ResultWithToken;
-  paymentForm: typeof defaultPaymentForm;
   showPayment: boolean;
 };
 
@@ -60,11 +54,7 @@ export default function TrafficPetitionTool() {
   const cameraStatusId = useId();
   const institutionId = useId();
   const explanationId = useId();
-  const paymentEmailId = useId();
-  const paymentPhoneId = useId();
-
   const [form, setForm] = useState<TrafficFormData>(defaultForm);
-  const [paymentForm, setPaymentForm] = useState(defaultPaymentForm);
   const [result, setResult] = useState<ResultWithToken | null>(null);
   const [error, setError] = useState("");
   const [paymentError, setPaymentError] = useState("");
@@ -80,10 +70,6 @@ export default function TrafficPetitionTool() {
 
   const updateField = (key: keyof TrafficFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
-  };
-
-  const updatePaymentField = (key: keyof typeof defaultPaymentForm, value: string) => {
-    setPaymentForm((current) => ({ ...current, [key]: value }));
   };
 
   const validateForm = () => {
@@ -105,14 +91,6 @@ export default function TrafficPetitionTool() {
   };
 
   const validatePaymentForm = () => {
-    if (!paymentForm.email || !paymentForm.phone) {
-      return "Ödeme için e-posta ve telefon alanlarını doldurun.";
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paymentForm.email)) {
-      return "Geçerli bir e-posta adresi girin.";
-    }
-
     if (form.tckn && !/^\d{11}$/.test(form.tckn)) {
       return "Ödeme için TCKN alanı 11 haneli olmalıdır.";
     }
@@ -135,7 +113,6 @@ export default function TrafficPetitionTool() {
         const snapshot = JSON.parse(rawSnapshot) as SnapshotPayload;
         setForm(snapshot.form);
         setResult(snapshot.result);
-        setPaymentForm(snapshot.paymentForm || defaultPaymentForm);
         setShowPayment(snapshot.showPayment);
       } catch {
         window.sessionStorage.removeItem(SNAPSHOT_KEY);
@@ -197,12 +174,11 @@ export default function TrafficPetitionTool() {
     const snapshot: SnapshotPayload = {
       form,
       result,
-      paymentForm,
       showPayment,
     };
 
     window.sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
-  }, [form, result, paymentForm, showPayment]);
+  }, [form, result, showPayment]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -284,8 +260,6 @@ export default function TrafficPetitionTool() {
         body: JSON.stringify({
           fullName: form.fullName,
           tckn: form.tckn,
-          email: paymentForm.email,
-          phone: paymentForm.phone,
           petitionToken: result?.petitionToken,
         }),
       });
@@ -578,34 +552,6 @@ export default function TrafficPetitionTool() {
               <p className="mt-3 text-[15px] leading-8 text-muted">
                 PDF indirme işlemi ödeme doğrulandıktan sonra aktif olur.
               </p>
-
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor={paymentEmailId} className="text-sm font-bold text-navy">
-                    E-posta
-                  </label>
-                  <input
-                    id={paymentEmailId}
-                    className={fieldClassName}
-                    value={paymentForm.email}
-                    onChange={(event) => updatePaymentField("email", event.target.value)}
-                    placeholder="ornek@eposta.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor={paymentPhoneId} className="text-sm font-bold text-navy">
-                    Telefon
-                  </label>
-                  <input
-                    id={paymentPhoneId}
-                    className={fieldClassName}
-                    value={paymentForm.phone}
-                    onChange={(event) => updatePaymentField("phone", event.target.value)}
-                    placeholder="05xx xxx xx xx"
-                  />
-                </div>
-              </div>
 
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
                 <div>

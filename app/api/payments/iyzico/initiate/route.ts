@@ -24,26 +24,18 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       fullName?: string;
       tckn?: string;
-      email?: string;
-      phone?: string;
       petitionToken?: string;
     };
 
     const fullName = body.fullName?.trim() || "";
-    const email = body.email?.trim() || "";
-    const phone = body.phone?.trim() || "";
     const tckn = body.tckn?.trim() || "";
     const petitionToken = body.petitionToken?.trim() || "";
 
-    if (!fullName || !email || !phone || !petitionToken) {
+    if (!fullName || !petitionToken) {
       return NextResponse.json(
-        { error: "Ödeme için gerekli iletişim alanları ve dilekçe belirteci gereklidir." },
+        { error: "Ödeme için ad soyad ve dilekçe belirteci gereklidir." },
         { status: 400 }
       );
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "Geçerli bir e-posta adresi girin." }, { status: 400 });
     }
 
     if (tckn && !/^\d{11}$/.test(tckn)) {
@@ -58,7 +50,6 @@ export async function POST(request: Request) {
     const conversationId = buildConversationId();
     const callbackUrl = new URL(getCallbackUrl());
     callbackUrl.searchParams.set("petition", petitionToken);
-    callbackUrl.searchParams.set("email", email);
 
     const response = await initializeCheckoutForm({
       conversationId,
@@ -66,8 +57,8 @@ export async function POST(request: Request) {
       buyer: {
         fullName,
         tckn,
-        email,
-        phone,
+        email: "destek@itirazdilekcesi.com",
+        phone: "+905555555555",
         address: "Dijital hizmet teslimatı",
         city: "Istanbul",
         ip: getClientIp(request),
