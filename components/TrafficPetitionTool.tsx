@@ -672,6 +672,7 @@ export default function TrafficPetitionTool() {
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
                   accessToken={paymentAccessToken}
                   petitionToken={result.petitionToken}
+                  autoStart={paymentReady}
                   disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}
                 />
               </div>

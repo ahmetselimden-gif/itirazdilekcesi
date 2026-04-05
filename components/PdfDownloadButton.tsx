@@ -1,10 +1,13 @@
 "use client";
 
+import { useCallback, useEffect, useRef } from "react";
+
 type PdfDownloadButtonProps = {
   fileName: string;
   disabled?: boolean;
   accessToken?: string;
   petitionToken?: string;
+  autoStart?: boolean;
 };
 
 const buttonClassName =
@@ -15,8 +18,11 @@ export default function PdfDownloadButton({
   disabled = false,
   accessToken = "",
   petitionToken = "",
+  autoStart = false,
 }: PdfDownloadButtonProps) {
-  const handleDownload = async () => {
+  const hasAutoStartedRef = useRef(false);
+
+  const handleDownload = useCallback(async () => {
     if (disabled || !accessToken || !petitionToken) {
       return;
     }
@@ -38,7 +44,20 @@ export default function PdfDownloadButton({
     anchor.click();
     anchor.remove();
     window.URL.revokeObjectURL(url);
-  };
+  }, [disabled, accessToken, petitionToken, fileName]);
+
+  useEffect(() => {
+    if (!autoStart || disabled || !accessToken || !petitionToken) {
+      return;
+    }
+
+    if (hasAutoStartedRef.current) {
+      return;
+    }
+
+    hasAutoStartedRef.current = true;
+    void handleDownload();
+  }, [autoStart, disabled, accessToken, petitionToken, handleDownload]);
 
   return (
     <button type="button" className={buttonClassName} onClick={handleDownload} disabled={disabled}>
