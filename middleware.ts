@@ -25,26 +25,30 @@ const paytrResultCsp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
   "connect-src 'self' https://api.openai.com",
-  "frame-src 'self' https://www.paytr.com",
-  "frame-ancestors https://www.paytr.com",
+  "frame-src 'self' https://www.paytr.com https://paytr.com",
+  "frame-ancestors https://www.paytr.com https://paytr.com",
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
 ].join("; ");
 
 function applySecurityHeaders(response: NextResponse, pathname: string) {
+  if (pathname === "/odeme/paytr-sonuc") {
+    response.headers.delete("X-Frame-Options");
+    response.headers.delete("Cross-Origin-Opener-Policy");
+    response.headers.delete("Cross-Origin-Resource-Policy");
+    response.headers.delete("Permissions-Policy");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    response.headers.set("Content-Security-Policy", paytrResultCsp);
+    return response;
+  }
+
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   response.headers.set("Cross-Origin-Resource-Policy", "same-site");
-
-  if (pathname === "/odeme/paytr-sonuc") {
-    response.headers.delete("X-Frame-Options");
-    response.headers.set("Content-Security-Policy", paytrResultCsp);
-    return response;
-  }
-
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Content-Security-Policy", defaultCsp);
   return response;
