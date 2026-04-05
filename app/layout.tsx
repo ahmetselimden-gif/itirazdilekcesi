@@ -10,10 +10,7 @@ const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
 const defaultDescription =
   "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve resmi PDF olarak indirin.";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
-const googleTagId =
-  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID ||
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ||
-  process.env.NEXT_PUBLIC_GA4_ID;
+const googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
 const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
 
@@ -101,29 +98,34 @@ export default function RootLayout({
         {googleTagId ? (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
-              strategy="afterInteractive"
-            />
-            <Script
-              id="google-tag"
+              id="google-tag-manager"
               strategy="afterInteractive"
               dangerouslySetInnerHTML={{
                 __html: `
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   window.gtag = gtag;
-                  gtag('js', new Date());
+                  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                  })(window,document,'script','dataLayer','${googleTagId}');
                   ${ga4Id ? `gtag('config', '${ga4Id}', { anonymize_ip: true });` : ""}
                   ${googleAdsId ? `gtag('config', '${googleAdsId}');` : ""}
-                  ${
-                    !ga4Id && googleTagId
-                      ? `gtag('config', '${googleTagId}', { anonymize_ip: true });`
-                      : ""
-                  }
                 `,
               }}
             />
           </>
+        ) : null}
+        {googleTagId ? (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${googleTagId}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
         ) : null}
         <div className="min-h-screen">
           <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgba(255,253,248,0.92)] backdrop-blur">
