@@ -54,6 +54,7 @@ export default function TrafficPetitionTool() {
   const cameraStatusId = useId();
   const institutionId = useId();
   const explanationId = useId();
+
   const [form, setForm] = useState<TrafficFormData>(defaultForm);
   const [result, setResult] = useState<ResultWithToken | null>(null);
   const [error, setError] = useState("");
@@ -136,7 +137,9 @@ export default function TrafficPetitionTool() {
 
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch(`/api/payments/access?token=${encodeURIComponent(token)}`);
+        const response = await fetch(
+          `/api/payments/access?token=${encodeURIComponent(token)}`
+        );
         const data = (await response.json()) as { valid?: boolean; error?: string };
 
         if (!response.ok || !data.valid) {
@@ -150,7 +153,9 @@ export default function TrafficPetitionTool() {
         setShowPayment(true);
         setPaymentReady(true);
         setPaymentAccessToken(token);
-        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        setPaymentStatusMessage(
+          "Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz."
+        );
         window.sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
       } catch {
         setPaymentError("Ödeme doğrulaması sırasında bağlantı hatası oluştu.");
@@ -548,18 +553,24 @@ export default function TrafficPetitionTool() {
 
           {result && showPayment ? (
             <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
-              <h3 className="font-display text-3xl text-navy-deep">Ödeme Kontrolü</h3>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="font-display text-3xl text-navy-deep">Güvenli Ödeme</h3>
+                <span className="inline-flex items-center rounded-full border border-line bg-surface-soft px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-navy">
+                  PayTR ile
+                </span>
+              </div>
               <p className="mt-3 text-[15px] leading-8 text-muted">
-                PDF indirme işlemi ödeme doğrulandıktan sonra aktif olur.
+                PDF indirme işlemi, PayTR üzerinden ödeme doğrulandıktan sonra aktif olur.
               </p>
 
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
                 <div>
                   <h4 className="text-sm font-bold text-navy">Ön Bilgilendirme</h4>
                   <p className="mt-2 text-sm leading-7 text-muted">
-                    Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe
-                    PDF&apos;i oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme
-                    sonrası dijital olarak anında yapılır.
+                    Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe PDF&apos;i
+                    oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme sonrası dijital
+                    olarak anında yapılır. Ödeme işlemi PayTR güvenli ödeme altyapısı üzerinden
+                    tamamlanır.
                   </p>
                 </div>
 
@@ -603,7 +614,7 @@ export default function TrafficPetitionTool() {
                   disabled={!approvalInfo || !approvalKvkk || isPaymentLoading}
                   onClick={handlePaymentStart}
                 >
-                  {isPaymentLoading ? "Ödeme sayfası açılıyor..." : "Ödemeye Geç"}
+                  {isPaymentLoading ? "PayTR ödeme sayfası açılıyor..." : "PayTR ile Öde"}
                 </button>
                 <PdfDownloadButton
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
@@ -616,11 +627,10 @@ export default function TrafficPetitionTool() {
           ) : null}
 
           <div className="rounded-[20px] border border-gold/45 bg-gold-soft/45 px-5 py-4 text-sm leading-7 text-muted">
-            <strong className="text-navy">Yasal Uyarı:</strong> Bu site bir avukatlık
-            hizmeti vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik
-            olarak dilekçe oluşturma asistanlığı yapmaktadır. Alınan dilekçenin hukuki
-            sonuçlarından kullanıcı sorumludur. Hak kaybına uğramamak için bir avukata
-            danışmanız tavsiye edilir.
+            <strong className="text-navy">Yasal Uyarı:</strong> Bu site bir avukatlık hizmeti
+            vermemektedir. Sadece kullanıcının beyan ettiği bilgilerle teknik olarak dilekçe
+            oluşturma asistanlığı yapmaktadır. Alınan dilekçenin hukuki sonuçlarından kullanıcı
+            sorumludur. Hak kaybına uğramamak için bir avukata danışmanız tavsiye edilir.
           </div>
         </div>
       </div>

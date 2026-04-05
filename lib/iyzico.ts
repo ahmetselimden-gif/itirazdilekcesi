@@ -52,7 +52,7 @@ function getCredentials() {
   const secretKey = process.env.IYZICO_SECRET_KEY;
 
   if (!apiKey || !secretKey) {
-    throw new Error("İyzico anahtarları eksik.");
+    throw new Error("Ödeme altyapısı anahtarları eksik.");
   }
 
   return { apiKey, secretKey };
