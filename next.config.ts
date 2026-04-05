@@ -34,6 +34,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://api.openai.com",
+      "frame-src 'self' https://www.paytr.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
