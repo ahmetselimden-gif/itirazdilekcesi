@@ -100,7 +100,7 @@ export default function RootLayout({
                   alt=""
                   width={44}
                   height={44}
-                  className="h-10 w-10 rounded-xl"
+                  className="h-12 w-12 rounded-xl sm:h-14 sm:w-14"
                   priority
                 />
                 <Image
@@ -108,7 +108,7 @@ export default function RootLayout({
                   alt="itirazdilekcesi.com"
                   width={268}
                   height={56}
-                  className="h-8 w-auto sm:h-9"
+                  className="h-10 w-auto sm:h-12"
                   priority
                 />
               </Link>
@@ -139,28 +139,12 @@ export default function RootLayout({
                 </Link>
               </div>
 
-              <div className="mx-auto grid max-w-4xl gap-4 rounded-[22px] border border-line/80 bg-surface px-5 py-5 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4">
+              <div className="mx-auto grid max-w-3xl gap-4 rounded-[22px] border border-line/80 bg-surface px-5 py-5 text-center sm:grid-cols-2 sm:text-left">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
-                    Satıcı
+                    Web Sitesi
                   </p>
-                  <p className="mt-2 text-sm leading-7 text-muted">Ahmet Selim Baltaş</p>
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
-                    Adres
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-muted">
-                    Fatih Mah. Sümer Cad. No: 9
-                    <br />
-                    Sultanbeyli / İstanbul
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
-                    Telefon
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-muted">0506 102 14 01</p>
+                  <p className="mt-2 text-sm leading-7 text-muted">www.itirazdilekcesi.com</p>
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
