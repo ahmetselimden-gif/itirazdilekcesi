@@ -172,12 +172,22 @@ async function buildPetitionPdf(petition: string) {
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as {
-    access?: string;
-    petition?: string;
-  };
-  const accessToken = body.access?.trim() || "";
-  const petitionToken = body.petition?.trim() || "";
+  const contentType = request.headers.get("content-type") || "";
+  let accessToken = "";
+  let petitionToken = "";
+
+  if (contentType.includes("application/json")) {
+    const body = (await request.json()) as {
+      access?: string;
+      petition?: string;
+    };
+    accessToken = body.access?.trim() || "";
+    petitionToken = body.petition?.trim() || "";
+  } else {
+    const formData = await request.formData();
+    accessToken = String(formData.get("access") || "").trim();
+    petitionToken = String(formData.get("petition") || "").trim();
+  }
 
   const accessVerification = verifyDownloadAccessToken(accessToken);
   if (!accessVerification.valid) {

@@ -21,37 +21,44 @@ export default function PdfDownloadButton({
   autoStart = false,
 }: PdfDownloadButtonProps) {
   const hasAutoStartedRef = useRef(false);
+  const iframeIdRef = useRef(`pdf-download-frame-${Math.random().toString(36).slice(2)}`);
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = useCallback(() => {
     if (disabled || !accessToken || !petitionToken) {
       return;
     }
 
-    const response = await fetch("/api/payments/download", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        access: accessToken,
-        petition: petitionToken,
-      }),
-    });
-
-    if (!response.ok) {
-      return;
+    let iframe = document.getElementById(iframeIdRef.current) as HTMLIFrameElement | null;
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = iframeIdRef.current;
+      iframe.name = iframeIdRef.current;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
     }
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = fileName;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.URL.revokeObjectURL(url);
-  }, [disabled, accessToken, petitionToken, fileName]);
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/api/payments/download";
+    form.target = iframeIdRef.current;
+    form.style.display = "none";
+
+    const accessInput = document.createElement("input");
+    accessInput.type = "hidden";
+    accessInput.name = "access";
+    accessInput.value = accessToken;
+    form.appendChild(accessInput);
+
+    const petitionInput = document.createElement("input");
+    petitionInput.type = "hidden";
+    petitionInput.name = "petition";
+    petitionInput.value = petitionToken;
+    form.appendChild(petitionInput);
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }, [disabled, accessToken, petitionToken]);
 
   useEffect(() => {
     if (!autoStart || disabled || !accessToken || !petitionToken) {
@@ -67,7 +74,13 @@ export default function PdfDownloadButton({
   }, [autoStart, disabled, accessToken, petitionToken, handleDownload]);
 
   return (
-    <button type="button" className={buttonClassName} onClick={handleDownload} disabled={disabled}>
+    <button
+      type="button"
+      className={buttonClassName}
+      onClick={handleDownload}
+      disabled={disabled}
+      aria-label={fileName}
+    >
       PDF indir
     </button>
   );
