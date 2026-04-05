@@ -1,35 +1,32 @@
 import { NextResponse } from "next/server";
 import { createDownloadAccessToken } from "@/lib/downloadAccess";
-import { verifyPaymentStateToken } from "@/lib/paymentState";
+import { verifyPetitionToken } from "@/lib/petitionToken";
 import { queryPaytrPayment } from "@/lib/paytr";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const merchantOid = searchParams.get("oid") || "";
-    const stateToken = searchParams.get("state") || "";
+    const body = (await request.json()) as {
+      oid?: string;
+      petitionToken?: string;
+    };
 
-    if (!merchantOid || !stateToken) {
+    const merchantOid = body.oid?.trim() || "";
+    const petitionToken = body.petitionToken?.trim() || "";
+
+    if (!merchantOid || !petitionToken) {
       return NextResponse.json(
         { valid: false, error: "Ödeme doğrulama bilgisi eksik." },
         { status: 400 }
       );
     }
 
-    const stateVerification = verifyPaymentStateToken(stateToken);
-    if (!stateVerification.valid) {
+    const petitionVerification = verifyPetitionToken(petitionToken);
+    if (!petitionVerification.valid) {
       return NextResponse.json(
-        { valid: false, error: stateVerification.reason },
-        { status: 401 }
-      );
-    }
-
-    if (stateVerification.payload.merchantOid !== merchantOid) {
-      return NextResponse.json(
-        { valid: false, error: "Sipariş numarası doğrulanamadı." },
+        { valid: false, error: petitionVerification.reason },
         { status: 401 }
       );
     }

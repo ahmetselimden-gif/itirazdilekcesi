@@ -4,7 +4,6 @@ import {
   initializePaytrIframe,
   isTestMode,
 } from "@/lib/paytr";
-import { createPaymentStateToken } from "@/lib/paymentState";
 import { verifyPetitionToken } from "@/lib/petitionToken";
 import { isTrustedOrigin } from "@/lib/requestSecurity";
 
@@ -53,12 +52,10 @@ export async function POST(request: Request) {
     }
 
     const merchantOid = buildMerchantOid();
-    const stateToken = createPaymentStateToken(merchantOid, petitionToken, fullName);
     const appUrl = getAppUrl();
     const okUrl = new URL("/", appUrl);
     okUrl.searchParams.set("payment", "success");
     okUrl.searchParams.set("oid", merchantOid);
-    okUrl.searchParams.set("state", stateToken);
 
     const failUrl = new URL("/", appUrl);
     failUrl.searchParams.set("payment", "failed");

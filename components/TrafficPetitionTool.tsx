@@ -125,8 +125,17 @@ export default function TrafficPetitionTool() {
     const access =
       params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
     const merchantOid = params.get("oid") || "";
-    const stateToken = params.get("state") || "";
     const message = params.get("message");
+    const restoredPetitionToken = rawSnapshot
+      ? (() => {
+          try {
+            const snapshot = JSON.parse(rawSnapshot) as SnapshotPayload;
+            return snapshot.result?.petitionToken || "";
+          } catch {
+            return "";
+          }
+        })()
+      : "";
 
     if (message) {
       setPaymentError(message);
@@ -137,11 +146,18 @@ export default function TrafficPetitionTool() {
       setPaymentReady(false);
     }
 
-    const verifyPaytrOrder = async (oid: string, state: string) => {
+    const verifyPaytrOrder = async (oid: string, petitionToken: string) => {
       try {
-        const response = await fetch(
-          `/api/payments/paytr/verify?oid=${encodeURIComponent(oid)}&state=${encodeURIComponent(state)}`
-        );
+        const response = await fetch("/api/payments/paytr/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            oid,
+            petitionToken,
+          }),
+        });
         const data = (await response.json()) as {
           valid?: boolean;
           error?: string;
@@ -198,8 +214,8 @@ export default function TrafficPetitionTool() {
       void verifyToken(access);
     }
 
-    if (payment === "success" && merchantOid && stateToken) {
-      void verifyPaytrOrder(merchantOid, stateToken);
+    if (payment === "success" && merchantOid && restoredPetitionToken) {
+      void verifyPaytrOrder(merchantOid, restoredPetitionToken);
     }
 
     if (payment || access || message) {
