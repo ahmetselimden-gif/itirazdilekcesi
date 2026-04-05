@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import {
   PDFDocument,
-  StandardFonts,
   rgb,
   type PDFFont,
   type PDFPage,
 } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import { verifyDownloadAccessToken } from "@/lib/downloadAccess";
 import { verifyPetitionToken } from "@/lib/petitionToken";
 
@@ -109,8 +111,17 @@ function drawWrappedParagraph(
 
 async function buildPetitionPdf(petition: string) {
   const pdfDoc = await PDFDocument.create();
-  const regularFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+  pdfDoc.registerFontkit(fontkit);
+
+  const regularFontBytes = await readFile(
+    path.join(process.cwd(), "public", "fonts", "times.ttf")
+  );
+  const boldFontBytes = await readFile(
+    path.join(process.cwd(), "public", "fonts", "timesbd.ttf")
+  );
+
+  const regularFont = await pdfDoc.embedFont(regularFontBytes);
+  const boldFont = await pdfDoc.embedFont(boldFontBytes);
 
   const lines = petition.split("\n");
   const title = lines[0] ?? "T.C.";
@@ -172,48 +183,60 @@ async function buildPetitionPdf(petition: string) {
 }
 
 export async function POST(request: Request) {
-  const contentType = request.headers.get("content-type") || "";
-  let accessToken = "";
-  let petitionToken = "";
+  try {
+    const contentType = request.headers.get("content-type") || "";
+    let accessToken = "";
+    let petitionToken = "";
 
-  if (contentType.includes("application/json")) {
-    const body = (await request.json()) as {
-      access?: string;
-      petition?: string;
-    };
-    accessToken = body.access?.trim() || "";
-    petitionToken = body.petition?.trim() || "";
-  } else {
-    const formData = await request.formData();
-    accessToken = String(formData.get("access") || "").trim();
-    petitionToken = String(formData.get("petition") || "").trim();
-  }
+    if (contentType.includes("application/json")) {
+      const body = (await request.json()) as {
+        access?: string;
+        petition?: string;
+      };
+      accessToken = body.access?.trim() || "";
+      petitionToken = body.petition?.trim() || "";
+    } else {
+      const formData = await request.formData();
+      accessToken = String(formData.get("access") || "").trim();
+      petitionToken = String(formData.get("petition") || "").trim();
+    }
 
-  const accessVerification = verifyDownloadAccessToken(accessToken);
-  if (!accessVerification.valid) {
+    const accessVerification = verifyDownloadAccessToken(accessToken);
+    if (!accessVerification.valid) {
+      return NextResponse.json(
+        { error: accessVerification.reason },
+        { status: 401 }
+      );
+    }
+
+    const petitionVerification = verifyPetitionToken(petitionToken);
+    if (!petitionVerification.valid) {
+      return NextResponse.json(
+        { error: petitionVerification.reason },
+        { status: 401 }
+      );
+    }
+
+    const pdfBytes = await buildPetitionPdf(petitionVerification.payload.petition);
+    const fileName = "trafik-cezasi-itiraz-dilekcesi.pdf";
+
+    return new NextResponse(Buffer.from(pdfBytes), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${fileName}"`,
+        "Cache-Control": "no-store",
+      },
+    });
+  } catch (error) {
     return NextResponse.json(
-      { error: accessVerification.reason },
-      { status: 401 }
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "PDF oluşturulurken beklenmeyen bir hata oluştu.",
+      },
+      { status: 500 }
     );
   }
-
-  const petitionVerification = verifyPetitionToken(petitionToken);
-  if (!petitionVerification.valid) {
-    return NextResponse.json(
-      { error: petitionVerification.reason },
-      { status: 401 }
-    );
-  }
-
-  const pdfBytes = await buildPetitionPdf(petitionVerification.payload.petition);
-  const fileName = "trafik-cezasi-itiraz-dilekcesi.pdf";
-
-  return new NextResponse(Buffer.from(pdfBytes), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${fileName}"`,
-      "Cache-Control": "no-store",
-    },
-  });
 }
