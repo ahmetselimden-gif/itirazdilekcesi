@@ -1,0 +1,38 @@
+<svg width="1200" height="340" viewBox="0 0 1200 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="340" rx="32" fill="#FCFAF5"/>
+  <g transform="translate(48 44)">
+    <rect x="0" y="8" width="182" height="182" rx="34" fill="#F2E7D2"/>
+    <path d="M53 52C53 42.6112 60.6112 35 70 35H117L143 61V147C143 156.389 135.389 164 126 164H70C60.6112 164 53 156.389 53 147V52Z" fill="white"/>
+    <path d="M117 35V53C117 61.8366 124.163 69 133 69H143" fill="#E7D7B8"/>
+    <path d="M117 35V53C117 61.8366 124.163 69 133 69H143" stroke="#C9AA6B" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M70 35H117L143 61V147C143 156.389 135.389 164 126 164H70C60.6112 164 53 156.389 53 147V52C53 42.6112 60.6112 35 70 35Z" stroke="#14324A" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M75 84H121" stroke="#14324A" stroke-width="8" stroke-linecap="round" opacity="0.22"/>
+    <path d="M75 105H121" stroke="#14324A" stroke-width="8" stroke-linecap="round" opacity="0.22"/>
+    <path d="M75 126H109" stroke="#14324A" stroke-width="8" stroke-linecap="round" opacity="0.22"/>
+    <path d="M154 96C154 71.6995 173.699 52 198 52H216C240.301 52 260 71.6995 260 96V128C260 162.242 232.242 190 198 190C163.758 190 136 162.242 136 128V96H154Z" fill="#14324A"/>
+    <path d="M174 124L192 142L226 108" stroke="#C9AA6B" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(344 74)">
+    <text x="0" y="74" fill="#14324A" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" letter-spacing="-1.2">
+      itirazdilekcesi
+    </text>
+    <text x="625" y="74" fill="#B23A2B" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" letter-spacing="-1.2">
+      .com
+    </text>
+    <text x="4" y="124" fill="#6B7280" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" letter-spacing="4">
+      TRAFİK CEZASI İTİRAZ DİLEKÇESİ PLATFORMU
+    </text>
+    <path d="M4 166H748" stroke="#D8C6A0" stroke-width="3"/>
+    <text x="4" y="214" fill="#14324A" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">
+      Dijital başvuru
+    </text>
+    <circle cx="224" cy="205" r="5" fill="#C9AA6B"/>
+    <text x="244" y="214" fill="#14324A" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">
+      Güvenli ödeme
+    </text>
+    <circle cx="453" cy="205" r="5" fill="#C9AA6B"/>
+    <text x="473" y="214" fill="#14324A" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">
+      Resmî PDF çıktı
+    </text>
+  </g>
+</svg>

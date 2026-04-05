@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 
@@ -28,6 +29,11 @@ export const metadata: Metadata = {
   category: "legal services",
   alternates: {
     canonical: "/",
+  },
+  icons: {
+    icon: "/branding/itirazdilekcesi-logo-mark.svg",
+    shortcut: "/branding/itirazdilekcesi-logo-mark.svg",
+    apple: "/branding/itirazdilekcesi-logo-mark.svg",
   },
   verification: googleVerification
     ? {
@@ -88,11 +94,23 @@ export default function RootLayout({
         <div className="min-h-screen">
           <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgba(255,253,248,0.92)] backdrop-blur">
             <div className="mx-auto flex min-h-20 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-              <Link
-                href="/"
-                className="font-display text-lg font-semibold tracking-tight text-navy transition-colors duration-200 hover:text-navy-deep"
-              >
-                Trafik Cezası İtiraz Dilekçesi
+              <Link href="/" className="flex items-center gap-3 transition-opacity duration-200 hover:opacity-90">
+                <Image
+                  src="/branding/itirazdilekcesi-logo-mark.svg"
+                  alt=""
+                  width={44}
+                  height={44}
+                  className="h-10 w-10 rounded-xl"
+                  priority
+                />
+                <Image
+                  src="/branding/itirazdilekcesi-logo-primary.svg"
+                  alt="itirazdilekcesi.com"
+                  width={268}
+                  height={56}
+                  className="h-8 w-auto sm:h-9"
+                  priority
+                />
               </Link>
             </div>
           </header>
