@@ -3,6 +3,28 @@ import TrafficPetitionTool from "@/components/TrafficPetitionTool";
 import { trafficNews } from "@/lib/news";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
+const faqItems = [
+  {
+    question: "Trafik cezasına itiraz süresi ne zaman başlar?",
+    answer:
+      "Uygulamada itiraz süresi çoğu durumda tebliğ tarihinden itibaren değerlendirilir. Bu nedenle cezanın yazıldığı gün ile tebliğ tarihi karıştırılmamalı, başvuru hazırlığı mümkün olan en kısa sürede tamamlanmalıdır.",
+  },
+  {
+    question: "Kırmızı ışık veya hız cezası hangi durumlarda tartışmalı hale gelir?",
+    answer:
+      "Teknik delilin eksik olması, radar veya kamera kaydının sunulmaması, ölçüm cihazının kalibrasyonunun belirsizliği, yanlış plaka bilgisi ya da tutanakta olayın açık anlatılmaması itiraz gerekçesi olarak değerlendirilebilir.",
+  },
+  {
+    question: "Hazırlanan dilekçe tek başına yeterli olur mu?",
+    answer:
+      "Dilekçe başvurunun temelidir; ancak varsa tebligat belgesi, ceza tutanağı, fotoğraf, video, rota bilgisi veya olayı destekleyen diğer belgelerle birlikte sunulması daha güçlü bir dosya oluşturur.",
+  },
+  {
+    question: "Ödeme yapıldıktan sonra kullanıcı ne alır?",
+    answer:
+      "Ödeme doğrulandıktan sonra kullanıcıya sadece dilekçe metnini içeren resmi PDF çıktısı açılır. Değerlendirme bölümü ekranda kalır ancak PDF dosyasına dahil edilmez.",
+  },
+];
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -48,6 +70,39 @@ const serviceSchema = {
   },
 };
 
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Trafik Cezası İtiraz Dilekçesi Hazırla",
+  url: siteUrl,
+  description:
+    "Trafik cezasına itiraz dilekçesi oluşturma aracı, başvuru rehberi ve güncel bilgilendirme içerikleri.",
+  inLanguage: "tr-TR",
+  about: {
+    "@type": "Thing",
+    name: "Trafik cezasına itiraz",
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Ana Sayfa",
+      item: siteUrl,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Trafik Cezası İtiraz Dilekçesi",
+      item: siteUrl,
+    },
+  ],
+};
+
 export default function HomePage() {
   return (
     <>
@@ -65,6 +120,16 @@ export default function HomePage() {
         id="service-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <Script
+        id="webpage-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="space-y-6 lg:space-y-8">
@@ -251,6 +316,30 @@ export default function HomePage() {
                 kaleminden teyit almak güvenli olur. Böylece yanlış birime başvuru nedeniyle süre
                 kaybı yaşama ihtimali azalır.
               </p>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+            <div className="mb-5">
+              <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
+                <span className="h-px w-8 bg-navy/30" />
+                Sık Sorulan Sorular
+              </span>
+              <h2 className="mt-3 font-display text-3xl text-navy-deep">
+                Trafik cezası itirazında en çok merak edilenler
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {faqItems.map((item) => (
+                <article
+                  key={item.question}
+                  className="rounded-[20px] border border-line bg-surface-soft px-5 py-5"
+                >
+                  <h3 className="text-lg font-semibold text-navy">{item.question}</h3>
+                  <p className="mt-3 text-[15px] leading-8 text-muted">{item.answer}</p>
+                </article>
+              ))}
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
@@ -9,6 +10,12 @@ const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
 const defaultDescription =
   "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve resmi PDF olarak indirin.";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const googleTagId =
+  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID ||
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ||
+  process.env.NEXT_PUBLIC_GA4_ID;
+const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -91,6 +98,33 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className="bg-shell font-body text-ink antialiased">
+        {googleTagId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
+              strategy="afterInteractive"
+            />
+            <Script
+              id="google-tag"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  window.gtag = gtag;
+                  gtag('js', new Date());
+                  ${ga4Id ? `gtag('config', '${ga4Id}', { anonymize_ip: true });` : ""}
+                  ${googleAdsId ? `gtag('config', '${googleAdsId}');` : ""}
+                  ${
+                    !ga4Id && googleTagId
+                      ? `gtag('config', '${googleTagId}', { anonymize_ip: true });`
+                      : ""
+                  }
+                `,
+              }}
+            />
+          </>
+        ) : null}
         <div className="min-h-screen">
           <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgba(255,253,248,0.92)] backdrop-blur">
             <div className="mx-auto flex min-h-20 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
