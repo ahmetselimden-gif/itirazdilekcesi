@@ -121,7 +121,7 @@ function buildIframeTokenHash(input: {
 }
 
 export function buildMerchantOid() {
-  return `petition-${randomUUID().replace(/-/g, "").slice(0, 24)}`;
+  return `petition${randomUUID().replace(/[^a-zA-Z0-9]/g, "").slice(0, 24)}`;
 }
 
 export function isTestMode() {
