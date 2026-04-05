@@ -53,12 +53,12 @@ export async function POST(request: Request) {
 
     const merchantOid = buildMerchantOid();
     const appUrl = getAppUrl();
-    const okUrl = new URL("/", appUrl);
-    okUrl.searchParams.set("payment", "success");
+    const okUrl = new URL("/odeme/paytr-sonuc", appUrl);
+    okUrl.searchParams.set("status", "success");
     okUrl.searchParams.set("oid", merchantOid);
 
-    const failUrl = new URL("/", appUrl);
-    failUrl.searchParams.set("payment", "failed");
+    const failUrl = new URL("/odeme/paytr-sonuc", appUrl);
+    failUrl.searchParams.set("status", "failed");
     failUrl.searchParams.set("message", "Ödeme tamamlanamadı.");
 
     const response = await initializePaytrIframe({
