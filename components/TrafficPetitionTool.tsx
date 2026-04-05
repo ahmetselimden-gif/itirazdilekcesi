@@ -124,6 +124,8 @@ export default function TrafficPetitionTool() {
     const payment = params.get("payment");
     const access =
       params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    const merchantOid = params.get("oid") || "";
+    const stateToken = params.get("state") || "";
     const message = params.get("message");
 
     if (message) {
@@ -134,6 +136,36 @@ export default function TrafficPetitionTool() {
       setShowPayment(true);
       setPaymentReady(false);
     }
+
+    const verifyPaytrOrder = async (oid: string, state: string) => {
+      try {
+        const response = await fetch(
+          `/api/payments/paytr/verify?oid=${encodeURIComponent(oid)}&state=${encodeURIComponent(state)}`
+        );
+        const data = (await response.json()) as {
+          valid?: boolean;
+          error?: string;
+          accessToken?: string;
+        };
+
+        if (!response.ok || !data.valid || !data.accessToken) {
+          setShowPayment(true);
+          setPaymentReady(false);
+          setPaymentAccessToken("");
+          setPaymentError(data.error || "PayTR ödeme sonucu doğrulanamadı.");
+          window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+          return;
+        }
+
+        setShowPayment(true);
+        setPaymentReady(true);
+        setPaymentAccessToken(data.accessToken);
+        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        window.sessionStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
+      } catch {
+        setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
+      }
+    };
 
     const verifyToken = async (token: string) => {
       try {
@@ -164,6 +196,10 @@ export default function TrafficPetitionTool() {
 
     if (access) {
       void verifyToken(access);
+    }
+
+    if (payment === "success" && merchantOid && stateToken) {
+      void verifyPaytrOrder(merchantOid, stateToken);
     }
 
     if (payment || access || message) {
@@ -257,7 +293,7 @@ export default function TrafficPetitionTool() {
     setIsPaymentLoading(true);
 
     try {
-      const response = await fetch("/api/payments/iyzico/initiate", {
+      const response = await fetch("/api/payments/paytr/initiate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

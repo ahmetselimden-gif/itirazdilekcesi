@@ -11,6 +11,7 @@ type DownloadAccessPayload = {
 function getSecret() {
   return (
     process.env.DOWNLOAD_ACCESS_SECRET ||
+    process.env.PAYTR_MERCHANT_SALT ||
     process.env.IYZICO_SECRET_KEY ||
     "development-download-secret"
   );

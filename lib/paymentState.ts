@@ -1,7 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-type PetitionTokenPayload = {
-  petition: string;
+type PaymentStatePayload = {
+  merchantOid: string;
+  petitionToken: string;
   fullName: string;
   exp: number;
 };
@@ -11,7 +12,7 @@ function getSecret() {
     process.env.DOWNLOAD_ACCESS_SECRET ||
     process.env.PAYTR_MERCHANT_SALT ||
     process.env.IYZICO_SECRET_KEY ||
-    "development-petition-secret"
+    "development-payment-state-secret"
   );
 }
 
@@ -27,27 +28,28 @@ function sign(payload: string) {
   return createHmac("sha256", getSecret()).update(payload).digest("base64url");
 }
 
-export function createPetitionToken(
-  petition: string,
+export function createPaymentStateToken(
+  merchantOid: string,
+  petitionToken: string,
   fullName: string,
-  ttlSeconds = 60 * 60 * 4
+  ttlSeconds = 60 * 60
 ) {
-  const payload: PetitionTokenPayload = {
-    petition,
+  const payload: PaymentStatePayload = {
+    merchantOid,
+    petitionToken,
     fullName,
     exp: Math.floor(Date.now() / 1000) + ttlSeconds,
   };
 
   const encoded = encode(JSON.stringify(payload));
-  const signature = sign(encoded);
-  return `${encoded}.${signature}`;
+  return `${encoded}.${sign(encoded)}`;
 }
 
-export function verifyPetitionToken(token: string) {
+export function verifyPaymentStateToken(token: string) {
   const [encoded, providedSignature] = token.split(".");
 
   if (!encoded || !providedSignature) {
-    return { valid: false as const, reason: "Geçersiz dilekçe belirteci." };
+    return { valid: false as const, reason: "Geçersiz ödeme oturumu." };
   }
 
   const expectedSignature = sign(encoded);
@@ -58,18 +60,18 @@ export function verifyPetitionToken(token: string) {
     providedBuffer.length !== expectedBuffer.length ||
     !timingSafeEqual(providedBuffer, expectedBuffer)
   ) {
-    return { valid: false as const, reason: "Dilekçe imzası doğrulanamadı." };
+    return { valid: false as const, reason: "Ödeme oturumu doğrulanamadı." };
   }
 
   try {
-    const payload = JSON.parse(decode(encoded)) as PetitionTokenPayload;
+    const payload = JSON.parse(decode(encoded)) as PaymentStatePayload;
 
     if (payload.exp < Math.floor(Date.now() / 1000)) {
-      return { valid: false as const, reason: "Dilekçe belirtecinin süresi dolmuş." };
+      return { valid: false as const, reason: "Ödeme oturumunun süresi dolmuş." };
     }
 
     return { valid: true as const, payload };
   } catch {
-    return { valid: false as const, reason: "Dilekçe belirteci çözümlenemedi." };
+    return { valid: false as const, reason: "Ödeme oturumu çözümlenemedi." };
   }
 }
