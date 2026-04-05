@@ -21,23 +21,37 @@ export default function PdfDownloadButton({
   autoStart = false,
 }: PdfDownloadButtonProps) {
   const hasAutoStartedRef = useRef(false);
-  const downloadUrl =
-    accessToken && petitionToken
-      ? `/api/payments/download?access=${encodeURIComponent(accessToken)}&petition=${encodeURIComponent(petitionToken)}`
-      : "";
 
-  const handleDownload = useCallback(() => {
-    if (disabled || !downloadUrl) {
+  const handleDownload = useCallback(async () => {
+    if (disabled || !accessToken || !petitionToken) {
       return;
     }
 
+    const response = await fetch("/api/payments/download", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        access: accessToken,
+        petition: petitionToken,
+      }),
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
-    anchor.href = downloadUrl;
+    anchor.href = url;
     anchor.download = fileName;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-  }, [disabled, downloadUrl, fileName]);
+    window.URL.revokeObjectURL(url);
+  }, [disabled, accessToken, petitionToken, fileName]);
 
   useEffect(() => {
     if (!autoStart || disabled || !accessToken || !petitionToken) {

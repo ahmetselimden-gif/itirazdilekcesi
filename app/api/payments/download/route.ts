@@ -171,10 +171,13 @@ async function buildPetitionPdf(petition: string) {
   return pdfDoc.save();
 }
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const accessToken = searchParams.get("access") || "";
-  const petitionToken = searchParams.get("petition") || "";
+export async function POST(request: Request) {
+  const body = (await request.json()) as {
+    access?: string;
+    petition?: string;
+  };
+  const accessToken = body.access?.trim() || "";
+  const petitionToken = body.petition?.trim() || "";
 
   const accessVerification = verifyDownloadAccessToken(accessToken);
   if (!accessVerification.valid) {
