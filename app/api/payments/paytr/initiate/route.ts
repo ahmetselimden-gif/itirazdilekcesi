@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import {
   buildMerchantOid,
+  buildPaytrIframeUrl,
   initializePaytrIframe,
-  isTestMode,
 } from "@/lib/paytr";
 import { verifyPetitionToken } from "@/lib/petitionToken";
 import { isTrustedOrigin } from "@/lib/requestSecurity";
@@ -53,12 +53,12 @@ export async function POST(request: Request) {
 
     const merchantOid = buildMerchantOid();
     const appUrl = getAppUrl();
-    const okUrl = new URL("/odeme/paytr-sonuc", appUrl);
-    okUrl.searchParams.set("status", "success");
+    const okUrl = new URL("/", appUrl);
+    okUrl.searchParams.set("payment", "success");
     okUrl.searchParams.set("oid", merchantOid);
 
-    const failUrl = new URL("/odeme/paytr-sonuc", appUrl);
-    failUrl.searchParams.set("status", "failed");
+    const failUrl = new URL("/", appUrl);
+    failUrl.searchParams.set("payment", "failed");
     failUrl.searchParams.set("message", "Ödeme tamamlanamadı.");
 
     const response = await initializePaytrIframe({
@@ -83,9 +83,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const checkoutUrl = `/odeme/paytr?token=${encodeURIComponent(
-      response.token
-    )}&test=${isTestMode() ? "1" : "0"}`;
+    const checkoutUrl = buildPaytrIframeUrl(response.token);
 
     return NextResponse.json({
       checkoutUrl,
