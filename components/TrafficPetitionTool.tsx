@@ -363,7 +363,7 @@ export default function TrafficPetitionTool() {
             </p>
           </div>
 
-          <div className="grid min-w-[280px] grid-cols-2 gap-3">
+          <div className="grid w-full grid-cols-2 gap-3 sm:w-auto sm:min-w-[280px]">
             <div className="rounded-2xl border border-line bg-surface-soft px-4 py-4">
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-navy">
                 Fiyat
@@ -590,10 +590,10 @@ export default function TrafficPetitionTool() {
                   <PetitionDocument petition={result.petition} />
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <button
                     type="button"
-                    className={primaryButtonClassName}
+                    className={`${primaryButtonClassName} w-full sm:w-auto`}
                     onClick={() => setShowPayment(true)}
                   >
                     PDF indir (19,99 TL)
@@ -608,11 +608,11 @@ export default function TrafficPetitionTool() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 className="font-display text-3xl text-navy-deep">Güvenli Ödeme</h3>
                 <span className="inline-flex items-center rounded-full border border-line bg-surface-soft px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-navy">
-                  PayTR ile
+                  Güvenli ödeme
                 </span>
               </div>
               <p className="mt-3 text-[15px] leading-8 text-muted">
-                PDF indirme işlemi, PayTR üzerinden ödeme doğrulandıktan sonra aktif olur.
+                PDF indirme işlemi, ödeme doğrulandıktan sonra aktif olur.
               </p>
 
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
@@ -621,7 +621,7 @@ export default function TrafficPetitionTool() {
                   <p className="mt-2 text-sm leading-7 text-muted">
                     Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe PDF&apos;i
                     oluşturulmasıdır. Toplam bedel 19,99 TL&apos;dir. Teslimat, ödeme sonrası dijital
-                    olarak anında yapılır. Ödeme işlemi PayTR güvenli ödeme altyapısı üzerinden
+                    olarak anında yapılır. Ödeme işlemi güvenli ödeme altyapısı üzerinden
                     tamamlanır.
                   </p>
                 </div>
@@ -659,20 +659,21 @@ export default function TrafficPetitionTool() {
                 </div>
               ) : null}
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button
                   type="button"
-                  className={primaryButtonClassName}
+                  className={`${primaryButtonClassName} w-full sm:w-auto`}
                   disabled={!approvalInfo || !approvalKvkk || isPaymentLoading}
                   onClick={handlePaymentStart}
                 >
-                  {isPaymentLoading ? "PayTR ödeme sayfası açılıyor..." : "PayTR ile Öde"}
+                  {isPaymentLoading ? "Ödeme sayfası açılıyor..." : "Ödeme Yap"}
                 </button>
                 <PdfDownloadButton
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
                   accessToken={paymentAccessToken}
                   petitionToken={result.petitionToken}
                   autoStart={paymentReady}
+                  onError={setPaymentError}
                   disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}
                 />
               </div>
