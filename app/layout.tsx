@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import Script from "next/script";
 import PageViewTracker from "@/components/PageViewTracker";
 import "./globals.css";
 
@@ -91,13 +90,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+      return (
     <html lang="tr">
       <head>
         {googleTagId ? (
-          <Script
+          <script
             id="gtm-script"
-            strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `
                 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
