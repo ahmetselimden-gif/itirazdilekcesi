@@ -104,7 +104,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             window.gtag = gtag;
             gtag('js', new Date());
-            gtag('config', 'G-VXJ97HTDG');
+            gtag('config', 'G-VXJ97HTDG', { debug_mode: true });
           `}
         </Script>
       </head>
