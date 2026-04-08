@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
 import PageViewTracker from "@/components/PageViewTracker";
 import "./globals.css";
@@ -92,7 +93,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <head />
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-VXJ97HTDG"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-VXJ97HTDG');
+          `}
+        </Script>
+      </head>
       <body className="bg-shell font-body text-ink antialiased">
         <GoogleTagManager gtmId="GTM-TS2575P9" />
         <div className="min-h-screen">
