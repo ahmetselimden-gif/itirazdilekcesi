@@ -1,9 +1,3 @@
-declare global {
-  interface Window {
-    dataLayer: Record<string, unknown>[];
-  }
-}
-
 const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 const conversionLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
 
@@ -12,8 +6,12 @@ function pushEvent(payload: Record<string, unknown>) {
     return;
   }
 
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(payload);
+  const globalWindow = window as Window & {
+    dataLayer?: Record<string, unknown>[];
+  };
+
+  globalWindow.dataLayer = globalWindow.dataLayer || [];
+  globalWindow.dataLayer.push(payload);
 }
 
 export function pageview(url: string) {
@@ -52,4 +50,3 @@ export function trackPurchase(value = 19.99, currency = "TRY", transactionId?: s
     });
   }
 }
-
