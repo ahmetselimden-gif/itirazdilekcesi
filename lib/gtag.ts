@@ -30,6 +30,30 @@ export function trackLead() {
   });
 }
 
+export function trackPetitionGenerated(penaltyType?: string) {
+  pushEvent({
+    event: "petition_generated",
+    event_category: "petition",
+    event_label: penaltyType || "traffic-petition",
+  });
+}
+
+export function trackBeginCheckout(value = 19.99, currency = "TRY") {
+  pushEvent({
+    event: "begin_checkout",
+    currency,
+    value,
+    items: [
+      {
+        item_id: "traffic-petition-pdf",
+        item_name: "Trafik Cezasi Itiraz Dilekcesi PDF",
+        price: value,
+        quantity: 1,
+      },
+    ],
+  });
+}
+
 export function trackPurchase(value = 19.99, currency = "TRY", transactionId?: string) {
   const resolvedTransactionId = transactionId || `petition-${Date.now()}`;
 
@@ -49,4 +73,12 @@ export function trackPurchase(value = 19.99, currency = "TRY", transactionId?: s
       transaction_id: resolvedTransactionId,
     });
   }
+}
+
+export function trackPdfDownload() {
+  pushEvent({
+    event: "pdf_download",
+    event_category: "petition",
+    event_label: "traffic-petition-pdf",
+  });
 }

@@ -4,7 +4,12 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import PetitionDocument from "@/components/PetitionDocument";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import { trackLead, trackPurchase } from "@/lib/gtag";
+import {
+  trackBeginCheckout,
+  trackLead,
+  trackPetitionGenerated,
+  trackPurchase,
+} from "@/lib/gtag";
 import type {
   TrafficFormData,
   TrafficGenerationResult,
@@ -287,6 +292,7 @@ export default function TrafficPetitionTool() {
 
       setResult(data);
       trackLead();
+      trackPetitionGenerated(form.penaltyType);
       window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
       setTurnstileToken("");
     } catch (requestError) {
@@ -313,6 +319,8 @@ export default function TrafficPetitionTool() {
     setIsPaymentLoading(true);
 
     try {
+      trackBeginCheckout(19.99, "TRY");
+
       const response = await fetch("/api/payments/paytr/initiate", {
         method: "POST",
         headers: {
