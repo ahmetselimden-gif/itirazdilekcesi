@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
-import { GoogleTagManager } from "@next/third-parties/google";
 import PageViewTracker from "@/components/PageViewTracker";
 import "./globals.css";
 
+const GTM_ID = "GTM-TS2575P9";
 const siteUrl = "https://www.itirazdilekcesi.com";
 const siteName = "itirazdilekcesi.com";
 const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
@@ -94,22 +94,37 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+            `,
+          }}
+        />
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-VXJ97HTDG"
+          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
           strategy="afterInteractive"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtm-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            gtag('config', 'G-VXJ97HTDG', { debug_mode: true });
+            window.dataLayer.push({
+              'gtm.start': new Date().getTime(),
+              event: 'gtm.js'
+            });
           `}
         </Script>
       </head>
       <body className="bg-shell font-body text-ink antialiased">
-        <GoogleTagManager gtmId="GTM-TS2575P9" />
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <div className="min-h-screen">
           <PageViewTracker />
           <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgba(255,253,248,0.92)] backdrop-blur">
