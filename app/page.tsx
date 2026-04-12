@@ -26,6 +26,12 @@ const faqItems = [
   },
 ];
 
+const conversionHighlights = [
+  "1000+ kişi kullandı",
+  "Resmi dilekçe formatı",
+  "5 dakikada hazır",
+];
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -191,6 +197,53 @@ export default function HomePage() {
                 </li>
               </ul>
             </aside>
+          </div>
+        </section>
+
+        <section className="rounded-[24px] border border-gold/45 bg-gold-soft/55 px-5 py-5 shadow-[0_20px_48px_rgba(31,58,95,0.08)] sm:px-7">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.82fr)] lg:items-center">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {conversionHighlights.map((item) => (
+                <div
+                  key={item}
+                  className="flex min-h-14 items-center gap-3 rounded-lg border border-line/80 bg-surface px-4 py-3"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5 flex-none text-gold"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  <span className="text-sm font-bold text-navy">{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex min-h-14 items-start gap-3 rounded-lg border border-danger/25 bg-white px-4 py-3">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="mt-0.5 h-5 w-5 flex-none text-danger"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+              </svg>
+              <p className="text-sm font-bold leading-7 text-danger">
+                Trafik cezalarına 15 gün içinde itiraz edilmezse hak kaybı olur.
+              </p>
+            </div>
           </div>
         </section>
 
