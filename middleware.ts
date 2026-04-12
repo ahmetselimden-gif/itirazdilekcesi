@@ -6,11 +6,11 @@ const ROOT_HOST = "itirazdilekcesi.com";
 
 const defaultCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https:",
+  "img-src 'self' data: blob: https://www.google.com https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net",
+  "connect-src 'self' https://api.openai.com",
   "frame-src 'self' https://www.paytr.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -20,11 +20,11 @@ const defaultCsp = [
 
 const paytrResultCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https:",
+  "img-src 'self' data: blob: https://www.google.com https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net",
+  "connect-src 'self' https://api.openai.com",
   "frame-src 'self' https://www.paytr.com https://paytr.com",
   "frame-ancestors https://www.paytr.com https://paytr.com",
   "base-uri 'self'",

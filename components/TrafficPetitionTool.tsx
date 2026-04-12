@@ -4,12 +4,6 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import PetitionDocument from "@/components/PetitionDocument";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import {
-  trackBeginCheckout,
-  trackLead,
-  trackPetitionGenerated,
-  trackPurchase,
-} from "@/lib/gtag";
 import type {
   TrafficFormData,
   TrafficGenerationResult,
@@ -183,7 +177,6 @@ export default function TrafficPetitionTool() {
         setPaymentReady(true);
         setPaymentAccessToken(data.accessToken);
         setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
-        trackPurchase(19.99, "TRY", oid);
         window.sessionStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
       } catch {
         setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
@@ -211,7 +204,6 @@ export default function TrafficPetitionTool() {
         setPaymentStatusMessage(
           "Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz."
         );
-        trackPurchase(19.99, "TRY");
         window.sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
       } catch {
         setPaymentError("Ödeme doğrulaması sırasında bağlantı hatası oluştu.");
@@ -291,8 +283,6 @@ export default function TrafficPetitionTool() {
       }
 
       setResult(data);
-      trackLead();
-      trackPetitionGenerated(form.penaltyType);
       window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
       setTurnstileToken("");
     } catch (requestError) {
@@ -319,8 +309,6 @@ export default function TrafficPetitionTool() {
     setIsPaymentLoading(true);
 
     try {
-      trackBeginCheckout(19.99, "TRY");
-
       const response = await fetch("/api/payments/paytr/initiate", {
         method: "POST",
         headers: {

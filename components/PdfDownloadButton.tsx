@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { trackPdfDownload } from "@/lib/gtag";
 
 type PdfDownloadButtonProps = {
   fileName: string;
@@ -70,7 +69,6 @@ export default function PdfDownloadButton({
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
-      trackPdfDownload();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
