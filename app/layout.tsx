@@ -8,9 +8,9 @@ const GTM_ID = "GTM-MCDMDGF4";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
 const siteName = "itirazdilekcesi.com";
-const defaultTitle = "Trafik Cezası İtiraz Dilekçesi Hazırla";
+const defaultTitle = "İtiraz Dilekçesi Hazırlama Paneli";
 const defaultDescription =
-  "Trafik cezasına itiraz için profesyonel dilekçe oluşturun, değerlendirme alın ve resmi PDF olarak indirin.";
+  "Trafik cezası, kiracı ve ev sahibi itiraz dilekçesi panelleri arasından ihtiyacınıza uygun aracı seçin.";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     "hız cezası itiraz dilekçesi",
     "park cezası itirazı",
     "trafik cezası dilekçe örneği",
+    "kiracı itiraz dilekçesi",
+    "ev sahibi itiraz dilekçesi",
+    "itiraz dilekçesi hazırlama",
   ],
   category: "legal services",
   alternates: {
@@ -74,7 +77,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Trafik Cezası İtiraz Dilekçesi Hazırla",
+        alt: "İtiraz Dilekçesi Hazırlama Paneli",
       },
     ],
   },

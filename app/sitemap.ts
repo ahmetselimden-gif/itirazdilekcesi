@@ -10,6 +10,9 @@ const seoPaths = [
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     "",
+    "/trafik-cezasi-itiraz",
+    "/kiraci",
+    "/ev-sahibi",
     ...seoPaths,
     "/mesafeli-satis-sozlesmesi",
     "/iptal-ve-iade-politikasi",
@@ -18,6 +21,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
     changeFrequency: path === "" || seoPaths.includes(path) ? "weekly" : "monthly",
-    priority: path === "" ? 1 : seoPaths.includes(path) ? 0.8 : 0.6,
+    priority: path === "" ? 1 : path === "/trafik-cezasi-itiraz" ? 0.9 : seoPaths.includes(path) ? 0.8 : 0.6,
   }));
 }

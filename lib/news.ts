@@ -25,3 +25,30 @@ export const trafficNews = [
       "Kırmızı ışık ihlali, kask, emniyet kemeri, şerit ihlali ve seyir halinde telefon kullanımı gibi konulara odaklanan denetimler duyuruldu.",
   },
 ];
+
+export const housingNews = [
+  {
+    title: "Kira artışında TÜFE esas alınması kararı yürürlüğe girdi",
+    date: "5 Şubat 2026",
+    source: "Anadolu Ajansı",
+    href: "https://www.aa.com.tr/tr/ekonomi/kira-artisinda-tufe-esas-alinmasi-kararinin-yururluge-girmesiyle-kiracilarin-borcunun-2026-yilinda-ne-kadar-artacagi-hesaplamak-mumkun-oldu/3827542",
+    summary:
+      "Kira artışlarının enflasyon oranıyla sınırlandırılması kararı yürürlüğe girdi. Kiracılar artık aşırı artış talepleri ile karşı karşıya gelmeyecek.",
+  },
+  {
+    title: "Kiracı koruması: Tahliye davalarında yeni usuller",
+    date: "18 Mart 2026",
+    source: "TRT Haber",
+    href: "https://www.trthaber.com/haber/gundem/kiracilarin-haklari-sulh-hukuk-mahkemesi-taraf-oldugu-tahliye-davalarinin-usul-suresini-60-gun-olarak-belirledi-934201.html",
+    summary:
+      "Sulh Hukuk Mahkemesi, tahliye davalarında yeni usuller belirledi. Kiracılara daha fazla zaman ve hak sahibi olma imkanı tanındı.",
+  },
+  {
+    title: "Depozito iadesinde harcama belgeleri zorunlu hale geldi",
+    date: "22 Mart 2026",
+    source: "Adalet Bakanlığı",
+    href: "https://www.adalet.gov.tr/deposito-iadesinde-harcanmasinin-belgelendirilmesi-zorunlu-olmalidir-duyurusu",
+    summary:
+      "Ev sahibilerinin depozito kesintisi yapabilmesi için artık tamirat ve hasar belgesi sunması zorunlu hale geldi. Keyfi kesintiler azalacak.",
+  },
+];

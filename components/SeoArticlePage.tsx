@@ -16,7 +16,7 @@ type SeoArticlePageProps = {
 function CtaButton() {
   return (
     <Link
-      href="/"
+      href="/trafik-cezasi-itiraz"
       className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-gold bg-gold px-5 text-center text-sm font-bold text-white shadow-[0_16px_34px_rgba(31,58,95,0.14)] transition duration-200 hover:-translate-y-0.5 hover:bg-navy hover:text-white focus:outline-none focus:ring-4 focus:ring-gold/30 sm:w-auto"
     >
       Hemen dilekçe oluştur (19.99 TL)

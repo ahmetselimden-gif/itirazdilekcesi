@@ -3,9 +3,9 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "itirazdilekcesi.com",
-    short_name: "İtiraz Dilekçesi",
+    short_name: "İtiraz Paneli",
     description:
-      "Trafik cezasına itiraz için profesyonel dilekçe oluşturun ve resmi PDF olarak indirin.",
+      "Trafik cezası, kiracı ve ev sahibi itiraz dilekçesi panelleri arasından seçim yapın.",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f3ea",
