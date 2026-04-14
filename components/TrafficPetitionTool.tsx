@@ -33,7 +33,7 @@ const textareaClassName =
   "min-h-40 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] leading-7 text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
 
 const primaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-6 text-sm font-bold text-white transition duration-200 hover:bg-navy-deep hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
 type ResultWithToken = TrafficGenerationResult & { petitionToken?: string };
 
@@ -382,160 +382,210 @@ export default function TrafficPetitionTool() {
 
       <div className="grid gap-6 px-5 py-6 sm:px-8 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)]">
         <div className="rounded-[24px] border border-line/80 bg-[linear-gradient(180deg,#fffdf9_0%,#f9f6ef_100%)] p-5 sm:p-6">
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label htmlFor={fullNameId} className="text-sm font-bold text-navy">
-                  Ad Soyad
-                </label>
-                <input
-                  id={fullNameId}
-                  className={fieldClassName}
-                  value={form.fullName}
-                  onChange={(event) => updateField("fullName", event.target.value)}
-                  required
-                />
-              </div>
+          {/* TALIMATLAR */}
+          <div className="mb-6 rounded-lg border border-gold/30 bg-gold-soft/30 p-4">
+            <p className="text-sm font-bold text-navy">📋 TALIMATLAR</p>
+            <ul className="mt-3 space-y-2 text-xs text-muted">
+              <li>✓ Tüm alanları doldurun (hepsi zorunlu)</li>
+              <li>✓ Ceza tarihi ve tebliğ tarihini doğru girin</li>
+              <li>✓ Ceza yeri ve türü açık yazın</li>
+              <li>✓ Dilekçeyi kontrol edin</li>
+              <li>✓ PDF&apos;i indirin veya mahkemeye gönderin</li>
+              <li>⚠️ Dilekçe imzalanmalıdır ve 15 gün içinde sunulmalıdır</li>
+            </ul>
+          </div>
 
-              <div className="space-y-2">
-                <label htmlFor={tcknId} className="text-sm font-bold text-navy">
-                  TCKN
-                </label>
-                <input
-                  id={tcknId}
-                  className={fieldClassName}
-                  value={form.tckn}
-                  onChange={(event) =>
-                    updateField("tckn", event.target.value.replace(/\D/g, ""))
-                  }
-                  inputMode="numeric"
-                  maxLength={11}
-                  placeholder="Opsiyonel"
-                />
-                <p className="text-xs leading-6 text-muted">
-                  Girilecekse TCKN yalnızca 11 haneli rakamlardan oluşmalıdır.
-                </p>
-              </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* KİŞİSEL BİLGİLER */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">👤 Kişisel Bilgiler</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor={fullNameId} className="text-sm font-bold text-navy">
+                    Ad Soyad <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    id={fullNameId}
+                    className={fieldClassName}
+                    value={form.fullName}
+                    onChange={(event) => updateField("fullName", event.target.value)}
+                    placeholder="Ali Yılmaz"
+                    required
+                  />
+                  <p className="text-xs text-muted/70">
+                    <span className="font-semibold">Örnek:</span> Mehmet Ahmet Çelik
+                  </p>
+                </div>
 
-              <div className="space-y-2">
-                <label htmlFor={plateId} className="text-sm font-bold text-navy">
-                  Plaka
-                </label>
-                <input
-                  id={plateId}
-                  className={fieldClassName}
-                  value={form.plate}
-                  onChange={(event) => updateField("plate", event.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor={penaltyDateId} className="text-sm font-bold text-navy">
-                  Ceza Tarihi
-                </label>
-                <input
-                  id={penaltyDateId}
-                  type="date"
-                  className={fieldClassName}
-                  value={form.penaltyDate}
-                  onChange={(event) => updateField("penaltyDate", event.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor={notificationDateId} className="text-sm font-bold text-navy">
-                  Tebliğ Tarihi
-                </label>
-                <input
-                  id={notificationDateId}
-                  type="date"
-                  className={fieldClassName}
-                  value={form.notificationDate}
-                  min={form.penaltyDate || undefined}
-                  onChange={(event) => updateField("notificationDate", event.target.value)}
-                  required
-                />
-                <p className="text-xs leading-6 text-muted">
-                  Eğer ceza kağıdı eve gelmediyse bugünün tarihini girerek devam
-                  edebilirsiniz. Tebliğ tarihi, ceza tarihinden önce olamaz.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor={penaltyTypeId} className="text-sm font-bold text-navy">
-                  Ceza Türü
-                </label>
-                <select
-                  id={penaltyTypeId}
-                  className={fieldClassName}
-                  value={form.penaltyType}
-                  onChange={(event) => updateField("penaltyType", event.target.value)}
-                >
-                  <option>Kırmızı ışık</option>
-                  <option>Hız ihlali</option>
-                  <option>Park cezası</option>
-                  <option>Diğer</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor={locationId} className="text-sm font-bold text-navy">
-                  Ceza Yeri
-                </label>
-                <input
-                  id={locationId}
-                  className={fieldClassName}
-                  value={form.location}
-                  onChange={(event) => updateField("location", event.target.value)}
-                  placeholder="İstanbul / Kadıköy"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor={cameraStatusId} className="text-sm font-bold text-navy">
-                  Kamera / Radar Durumu
-                </label>
-                <select
-                  id={cameraStatusId}
-                  className={fieldClassName}
-                  value={form.cameraStatus}
-                  onChange={(event) => updateField("cameraStatus", event.target.value)}
-                >
-                  <option>Var</option>
-                  <option>Yok</option>
-                  <option>Bilmiyorum</option>
-                </select>
+                <div className="space-y-2">
+                  <label htmlFor={tcknId} className="text-sm font-bold text-navy">
+                    TC Kimlik No
+                  </label>
+                  <input
+                    id={tcknId}
+                    className={fieldClassName}
+                    value={form.tckn}
+                    onChange={(event) =>
+                      updateField("tckn", event.target.value.replace(/\D/g, ""))
+                    }
+                    inputMode="numeric"
+                    maxLength={11}
+                    placeholder="12345678901"
+                  />
+                  <p className="text-xs text-muted/70">
+                    <span className="font-semibold">Örnek:</span> 12345678901 (11 haneli)
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor={institutionId} className="text-sm font-bold text-navy">
-                Kurum Adı
-              </label>
-              <input
-                id={institutionId}
-                className={fieldClassName}
-                value={form.institution}
-                onChange={(event) => updateField("institution", event.target.value)}
-                placeholder="Boş bırakırsanız ceza yerine göre mahkeme otomatik oluşturulur"
-              />
+            {/* CEZA DETAYLARı */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">⚖️ Ceza Detayları</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor={plateId} className="text-sm font-bold text-navy">
+                    Plaka <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    id={plateId}
+                    className={fieldClassName}
+                    value={form.plate}
+                    onChange={(event) => updateField("plate", event.target.value)}
+                    placeholder="34 ABC 1234"
+                    required
+                  />
+                  <p className="text-xs text-muted/70">
+                    <span className="font-semibold">Örnek:</span> 34 KMR 5678
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={penaltyTypeId} className="text-sm font-bold text-navy">
+                    Ceza Türü <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    id={penaltyTypeId}
+                    className={fieldClassName}
+                    value={form.penaltyType}
+                    onChange={(event) => updateField("penaltyType", event.target.value)}
+                  >
+                    <option>Kırmızı ışık</option>
+                    <option>Hız ihlali</option>
+                    <option>Park cezası</option>
+                    <option>Diğer</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={penaltyDateId} className="text-sm font-bold text-navy">
+                    Ceza Tarihi <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    id={penaltyDateId}
+                    type="date"
+                    className={fieldClassName}
+                    value={form.penaltyDate}
+                    onChange={(event) => updateField("penaltyDate", event.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-muted/70">Cezanın yazılı olduğu tarih</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={notificationDateId} className="text-sm font-bold text-navy">
+                    Tebliğ Tarihi <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    id={notificationDateId}
+                    type="date"
+                    className={fieldClassName}
+                    value={form.notificationDate}
+                    min={form.penaltyDate || undefined}
+                    onChange={(event) => updateField("notificationDate", event.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-muted/70">
+                    Ceza kağıdını teslim alma tarihi. Bilmiyorsanız bugünün tarihini girin.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={locationId} className="text-sm font-bold text-navy">
+                    Ceza Yeri <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    id={locationId}
+                    className={fieldClassName}
+                    value={form.location}
+                    onChange={(event) => updateField("location", event.target.value)}
+                    placeholder="İstanbul / Kadıköy, Moda Cad."
+                    required
+                  />
+                  <p className="text-xs text-muted/70">
+                    <span className="font-semibold">Örnek:</span> Beşiktaş / Barbaros Bulvarı
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={cameraStatusId} className="text-sm font-bold text-navy">
+                    Kamera / Radar Durumu <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    id={cameraStatusId}
+                    className={fieldClassName}
+                    value={form.cameraStatus}
+                    onChange={(event) => updateField("cameraStatus", event.target.value)}
+                  >
+                    <option>Var</option>
+                    <option>Yok</option>
+                    <option>Bilmiyorum</option>
+                  </select>
+                  <p className="text-xs text-muted/70">
+                    Ceza yerinde kamera veya radar bulunup bulunmadığını seçin
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor={explanationId} className="text-sm font-bold text-navy">
-                Açıklama
-              </label>
-              <textarea
-                id={explanationId}
-                className={textareaClassName}
-                value={form.explanation}
-                onChange={(event) => updateField("explanation", event.target.value)}
-                placeholder="Ceza neden haksız, usul veya delil eksikliği varsa yazın"
-                required
-              />
+            {/* İTİRAZ DETAYLARı */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">📝 İtiraz Detayları</h3>
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <label htmlFor={institutionId} className="text-sm font-bold text-navy">
+                    Kurum Adı
+                  </label>
+                  <input
+                    id={institutionId}
+                    className={fieldClassName}
+                    value={form.institution}
+                    onChange={(event) => updateField("institution", event.target.value)}
+                    placeholder="Sulh Ceza Mahkemesi"
+                  />
+                  <p className="text-xs text-muted/70">
+                    Opsiyonel. Boş bırakırsanız ceza yerine göre mahkeme otomatik oluşturulur.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor={explanationId} className="text-sm font-bold text-navy">
+                    İtiraz Nedeni <span className="text-danger">*</span>
+                  </label>
+                  <textarea
+                    id={explanationId}
+                    className={textareaClassName}
+                    value={form.explanation}
+                    onChange={(event) => updateField("explanation", event.target.value)}
+                    placeholder="Ceza neden haksız? Hangi usul veya delil eksikliği var?"
+                    required
+                  />
+                  <p className="text-xs text-muted/70">
+                    <span className="font-semibold">Örnek:</span> Tutanakta araç bilgileri hatalı,
+                    radar kaydı sunulmadı, plaka yanlış yazılı vb.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
