@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-type PaymentResultParams = {
-  status?: string;
-  oid?: string;
-  type?: string;
-  product?: string;
-  data?: string;
-};
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

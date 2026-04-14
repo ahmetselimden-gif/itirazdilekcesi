@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useId, useState } from "react";
+import { FormEvent, useState } from "react";
 import FormField from "./FormField";
 import { getCourtInfo } from "@/lib/courts-info";
 
@@ -182,7 +182,7 @@ export default function HousingPetitionTool({
               <li>✓ Tüm alanları doldurun (hepsi zorunlu)</li>
               <li>✓ Her alana doğru bilgi girin</li>
               <li>✓ Dilekçeyi kontrol edin</li>
-              <li>✓ PDF'i indirin veya kopyalayıp mahkemeye gönderin</li>
+              <li>✓ PDF&apos;i indirin veya kopyalayıp mahkemeye gönderin</li>
               <li>⚠️ Dilekçe imzalanmalıdır ve 15 gün içinde sunulmalıdır</li>
             </ul>
           </div>

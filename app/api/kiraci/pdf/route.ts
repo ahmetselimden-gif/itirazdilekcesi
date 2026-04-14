@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     doc.moveDown(0.3);
     doc.font('Helvetica-Bold').text('3. YAŞANAN SORUNUN DETAYLARı:', { continued: false });
-    doc.font('Helvetica').text(body.explanation, { align: 'justify' });
+    doc.font('Helvetica').text(body.explanation || "", { align: 'justify' });
 
     doc.moveDown(0.3);
     doc.font('Helvetica-Bold').text('4. HUKUKİ TALEP VE SONUÇ:', { continued: false });
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     doc.end();
 
     // Wait for PDF generation to complete
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       doc.on('finish', () => {
         const buffer = Buffer.concat(chunks);
         resolve(

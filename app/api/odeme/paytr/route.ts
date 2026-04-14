@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       failUrl: `${appUrl}/odeme/paytr-sonuc?status=failed&oid=${merchantOid}`,
     });
 
-    if (paytrResponse.status === "failed") {
+    if (paytrResponse.status === "failed" || !paytrResponse.token) {
       return NextResponse.json(
         { error: paytrResponse.reason || "Ödeme başlatılamadı" },
         { status: 500 }
