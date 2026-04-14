@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { formatAciklama } from "@/lib/aiFormat";
 
 export type PetitionPanel = "kiraci" | "ev-sahibi";
 
@@ -212,7 +213,11 @@ export async function generateHousingPetition(
   panel: PetitionPanel,
   data: HousingPetitionData
 ): Promise<PetitionGenerationResult> {
-  const fallbackResult = buildFallbackHousingResult(panel, data);
+  const formattedData = {
+    ...data,
+    explanation: await formatAciklama(data.explanation),
+  };
+  const fallbackResult = buildFallbackHousingResult(panel, formattedData);
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -224,7 +229,7 @@ export async function generateHousingPetition(
     const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
     const response = await client.responses.create({
       model,
-      input: buildHousingPrompt(panel, data),
+      input: buildHousingPrompt(panel, formattedData),
     });
 
     const rawText = response.output_text?.trim();

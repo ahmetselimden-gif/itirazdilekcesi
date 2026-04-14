@@ -458,7 +458,7 @@ export default function HousingPetitionTool({
             </div>
 
             <button type="submit" className={primaryButtonClassName} disabled={isLoading}>
-              {isLoading ? "Dilekçe oluşturuluyor..." : "Dilekçemi Oluştur"}
+              {isLoading ? "Metniniz düzenleniyor..." : "Dilekçemi Oluştur"}
             </button>
 
             {error ? (
