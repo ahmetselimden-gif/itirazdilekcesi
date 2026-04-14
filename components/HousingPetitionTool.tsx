@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useState } from "react";
+import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PaymentButton from "@/components/PaymentButton";
 import PdfDownloadHandler from "@/components/PdfDownloadHandler";
-import PetitionPreview from "@/components/PetitionPreview";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_VERIFY_ENDPOINT,
@@ -101,6 +101,10 @@ export default function HousingPetitionTool({
 
   const updateField = (key: keyof HousingFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const updatePetitionText = (petition: string) => {
+    setResult((current) => (current ? { ...current, petition } : current));
   };
 
   useEffect(() => {
@@ -496,7 +500,11 @@ export default function HousingPetitionTool({
                   </p>
                 </div>
 
-                <PetitionPreview petition={result.petition} />
+                <EditablePetitionPreview
+                  petition={result.petition}
+                  isPaid={paymentReady}
+                  onChange={updatePetitionText}
+                />
 
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <button
@@ -581,6 +589,7 @@ export default function HousingPetitionTool({
                   fileName={fileName}
                   accessToken={paymentAccessToken}
                   petitionToken={result.petitionToken}
+                  petitionText={result.petition}
                   autoStart={paymentReady}
                   onError={setPaymentError}
                   disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}

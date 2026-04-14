@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useState } from "react";
+import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
-import PetitionDocument from "@/components/PetitionDocument";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
@@ -76,6 +76,10 @@ export default function TrafficPetitionTool() {
 
   const updateField = (key: keyof TrafficFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const updatePetitionText = (petition: string) => {
+    setResult((current) => (current ? { ...current, petition } : current));
   };
 
   const validateForm = () => {
@@ -642,9 +646,11 @@ export default function TrafficPetitionTool() {
                   </p>
                 </div>
 
-                <div className="mt-5 rounded-[22px] border border-line bg-white p-4 sm:p-6">
-                  <PetitionDocument petition={result.petition} />
-                </div>
+                <EditablePetitionPreview
+                  petition={result.petition}
+                  isPaid={paymentReady}
+                  onChange={updatePetitionText}
+                />
 
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <button
@@ -728,6 +734,7 @@ export default function TrafficPetitionTool() {
                   fileName="trafik-cezasi-itiraz-dilekcesi.pdf"
                   accessToken={paymentAccessToken}
                   petitionToken={result.petitionToken}
+                  petitionText={result.petition}
                   autoStart={paymentReady}
                   onError={setPaymentError}
                   disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}

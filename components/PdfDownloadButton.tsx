@@ -7,6 +7,7 @@ type PdfDownloadButtonProps = {
   disabled?: boolean;
   accessToken?: string;
   petitionToken?: string;
+  petitionText?: string;
   autoStart?: boolean;
   onError?: (message: string) => void;
 };
@@ -19,6 +20,7 @@ export default function PdfDownloadButton({
   disabled = false,
   accessToken = "",
   petitionToken = "",
+  petitionText = "",
   autoStart = false,
   onError,
 }: PdfDownloadButtonProps) {
@@ -42,6 +44,7 @@ export default function PdfDownloadButton({
         body: JSON.stringify({
           access: accessToken,
           petition: petitionToken,
+          editedPetition: petitionText,
         }),
       });
 
@@ -78,7 +81,7 @@ export default function PdfDownloadButton({
     } finally {
       setIsDownloading(false);
     }
-  }, [accessToken, disabled, fileName, isDownloading, onError, petitionToken]);
+  }, [accessToken, disabled, fileName, isDownloading, onError, petitionText, petitionToken]);
 
   useEffect(() => {
     if (!autoStart || disabled || isDownloading || !accessToken || !petitionToken) {

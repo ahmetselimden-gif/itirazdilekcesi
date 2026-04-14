@@ -11,18 +11,22 @@ export async function POST(request: Request) {
     const contentType = request.headers.get("content-type") || "";
     let accessToken = "";
     let petitionToken = "";
+    let editedPetition = "";
 
     if (contentType.includes("application/json")) {
       const body = (await request.json()) as {
         access?: string;
         petition?: string;
+        editedPetition?: string;
       };
       accessToken = body.access?.trim() || "";
       petitionToken = body.petition?.trim() || "";
+      editedPetition = body.editedPetition?.trim() || "";
     } else {
       const formData = await request.formData();
       accessToken = String(formData.get("access") || "").trim();
       petitionToken = String(formData.get("petition") || "").trim();
+      editedPetition = String(formData.get("editedPetition") || "").trim();
     }
 
     const accessVerification = verifyDownloadAccessToken(accessToken);
@@ -41,7 +45,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const pdfBytes = await buildPetitionPdf(petitionVerification.payload.petition);
+    const pdfBytes = await buildPetitionPdf(
+      editedPetition || petitionVerification.payload.petition
+    );
 
     return new NextResponse(Buffer.from(pdfBytes), {
       status: 200,

@@ -120,7 +120,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
         <div className="min-h-screen">
           <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgba(255,253,248,0.92)] backdrop-blur">
-            <div className="mx-auto flex min-h-20 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex min-h-20 w-full items-center px-4 sm:px-6 lg:min-h-24 lg:px-10">
               <Link
                 href="/"
                 className="flex items-center gap-3 transition-opacity duration-200 hover:opacity-90"
@@ -130,7 +130,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   alt=""
                   width={44}
                   height={44}
-                  className="h-12 w-12 rounded-xl sm:h-14 sm:w-14"
+                  className="h-12 w-12 rounded-xl sm:h-14 sm:w-14 lg:h-16 lg:w-16"
                   priority
                 />
                 <Image
@@ -138,7 +138,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   alt="itirazdilekcesi.com"
                   width={268}
                   height={56}
-                  className="h-10 w-auto sm:h-12"
+                  className="h-10 w-auto sm:h-12 lg:h-16"
                   priority
                 />
               </Link>
