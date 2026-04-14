@@ -25,14 +25,32 @@ function getLineClassName(trimmed: string) {
   return "petition-line";
 }
 
+function parsePetitionParts(petition: string) {
+  const lines = petition.split("\n");
+  const titleIndex = lines.findIndex((line) => line.trim());
+  const title = titleIndex >= 0 ? lines[titleIndex].trim() : "";
+  const institutionIndex = lines.findIndex(
+    (line, index) => index > titleIndex && line.trim()
+  );
+  const institution = institutionIndex >= 0 ? lines[institutionIndex].trim() : "";
+  const bodyLines =
+    institutionIndex >= 0
+      ? lines.slice(institutionIndex + 1)
+      : lines.slice(Math.max(titleIndex + 1, 0));
+
+  return {
+    title,
+    institution,
+    bodyLines,
+  };
+}
+
 export default function PetitionDocument({
   petition,
   className = "",
 }: PetitionDocumentProps) {
-  const lines = petition.split("\n");
-  const title = lines[0] ?? "";
-  const institution = lines[1] ?? "";
-  const bodyLines = lines.slice(2).filter((line, index, arr) => {
+  const { title, institution, bodyLines } = parsePetitionParts(petition);
+  const filteredBodyLines = bodyLines.filter((line, index, arr) => {
     if (index === 0 && line.trim() === "") {
       return false;
     }
@@ -48,7 +66,7 @@ export default function PetitionDocument({
       </div>
 
       <div className="petition-body">
-        {bodyLines.map((line, index) => {
+        {filteredBodyLines.map((line, index) => {
           const trimmed = line.trim();
 
           if (!trimmed) {

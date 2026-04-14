@@ -98,6 +98,26 @@ function drawWrappedParagraph(
   pageRef.cursorY -= options?.gapAfter ?? 3;
 }
 
+function parsePetitionParts(petition: string) {
+  const lines = petition.split("\n");
+  const titleIndex = lines.findIndex((line) => line.trim());
+  const title = titleIndex >= 0 ? lines[titleIndex].trim() : "T.C.";
+  const institutionIndex = lines.findIndex(
+    (line, index) => index > titleIndex && line.trim()
+  );
+  const institution = institutionIndex >= 0 ? lines[institutionIndex].trim() : "";
+  const bodyLines =
+    institutionIndex >= 0
+      ? lines.slice(institutionIndex + 1)
+      : lines.slice(Math.max(titleIndex + 1, 0));
+
+  return {
+    title,
+    institution,
+    bodyLines,
+  };
+}
+
 export async function buildPetitionPdf(petition: string) {
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
@@ -112,10 +132,7 @@ export async function buildPetitionPdf(petition: string) {
   const regularFont = await pdfDoc.embedFont(regularFontBytes);
   const boldFont = await pdfDoc.embedFont(boldFontBytes);
 
-  const lines = petition.split("\n");
-  const title = lines[0] ?? "T.C.";
-  const institution = lines[1] ?? "";
-  const bodyLines = lines.slice(2);
+  const { title, institution, bodyLines } = parsePetitionParts(petition);
 
   const pageRef = {
     page: createPage(pdfDoc),
