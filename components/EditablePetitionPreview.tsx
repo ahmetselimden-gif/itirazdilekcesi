@@ -1,5 +1,7 @@
 "use client";
 
+import PetitionDocument from "@/components/PetitionDocument";
+
 type EditablePetitionPreviewProps = {
   petition: string;
   isPaid: boolean;
@@ -29,13 +31,18 @@ export default function EditablePetitionPreview({
         {isPaid ? afterPaymentMessage : beforePaymentMessage}
       </div>
 
-      <textarea
-        className="min-h-[520px] w-full resize-y rounded-[22px] border border-line bg-white p-4 font-serif text-[15px] leading-8 text-ink outline-none transition duration-200 focus:border-navy focus:ring-4 focus:ring-navy/10 disabled:cursor-not-allowed disabled:bg-surface-soft disabled:text-muted sm:p-6"
-        value={petition}
-        readOnly={!isPaid}
-        onChange={(event) => onChange(event.target.value)}
-        aria-label="Dilekçe metni önizleme"
-      />
+      {isPaid ? (
+        <textarea
+          className="min-h-[520px] w-full resize-y rounded-[22px] border border-line bg-white p-4 font-serif text-[15px] leading-8 text-ink outline-none transition duration-200 focus:border-navy focus:ring-4 focus:ring-navy/10 sm:p-6"
+          value={petition}
+          onChange={(event) => onChange(event.target.value)}
+          aria-label="Dilekçe metni önizleme"
+        />
+      ) : (
+        <div className="rounded-[22px] border border-line bg-white p-4 sm:p-6">
+          <PetitionDocument petition={petition} />
+        </div>
+      )}
     </div>
   );
 }
