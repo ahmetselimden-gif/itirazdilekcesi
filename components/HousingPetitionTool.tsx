@@ -60,7 +60,7 @@ const textareaClassName =
   "min-h-40 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] leading-7 text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
 
 const primaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-6 text-sm font-bold text-white transition duration-200 hover:bg-navy-deep hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
 export default function HousingPetitionTool({
   apiPath,
@@ -303,63 +303,101 @@ export default function HousingPetitionTool({
 
       <div className="grid gap-6 px-5 py-6 sm:px-8 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)]">
         <div className="rounded-[24px] border border-line/80 bg-[linear-gradient(180deg,#fffdf9_0%,#f9f6ef_100%)] p-5 sm:p-6">
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div className="grid gap-4 md:grid-cols-2">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* TALIMATLAR */}
+            <div className="mb-6 rounded-lg border border-gold/30 bg-gold-soft/30 p-4">
+              <p className="text-sm font-bold text-navy">📋 TALIMATLAR</p>
+              <ul className="mt-3 space-y-2 text-xs text-muted">
+                <li>✓ Tüm zorunlu alanları doldurun</li>
+                <li>✓ Adres ve isimleri tam yazın</li>
+                <li>✓ Sorunu net bir şekilde açıklayın</li>
+                <li>✓ Dilekçeyi okuyup kontrol edin</li>
+                <li>✓ PDF&apos;i indirin veya mahkemeye gönderin</li>
+                <li>⚠️ Dilekçe imzalanmalı ve belirtilen sürede sunulmalıdır</li>
+              </ul>
+            </div>
+
+            {/* KİŞİSEL BİLGİLER */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">👤 Kişisel Bilgiler</h3>
+              <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label htmlFor={fullNameId} className="text-sm font-bold text-navy">
-                  Ad Soyad
+                  Ad Soyad <span className="text-danger">*</span>
                 </label>
                 <input
                   id={fullNameId}
                   className={fieldClassName}
                   value={form.fullName}
                   onChange={(event) => updateField("fullName", event.target.value)}
+                  placeholder="Ali Yılmaz"
                   required
                 />
+                <p className="text-xs text-muted/70">
+                  <span className="font-semibold">Örnek:</span> Mehmet Akşit Çelik
+                </p>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor={addressId} className="text-sm font-bold text-navy">
-                  Adres
+                  Adres <span className="text-danger">*</span>
                 </label>
                 <input
                   id={addressId}
                   className={fieldClassName}
                   value={form.address}
                   onChange={(event) => updateField("address", event.target.value)}
+                  placeholder="İstanbul, Kadıköy, Moda Cad. No: 123"
                   required
                 />
+                <p className="text-xs text-muted/70">
+                  <span className="font-semibold">Örnek:</span> Ankara, Çankaya, Atatürk Bulvarı
+                </p>
               </div>
+              </div>
+            </div>
 
+            {/* UYUŞMAZLIK DETAYLARı */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">⚖️ Uyuşmazlık Detayları</h3>
+              <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label htmlFor={counterpartyNameId} className="text-sm font-bold text-navy">
-                  {counterpartyLabel}
+                  {counterpartyLabel} <span className="text-danger">*</span>
                 </label>
                 <input
                   id={counterpartyNameId}
                   className={fieldClassName}
                   value={form.counterpartyName}
                   onChange={(event) => updateField("counterpartyName", event.target.value)}
+                  placeholder="Ahmet Demir"
                   required
                 />
+                <p className="text-xs text-muted/70">
+                  <span className="font-semibold">Örnek:</span> Fatma Yüksek
+                </p>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor={rentedAddressId} className="text-sm font-bold text-navy">
-                  Kiralanan Ev Adresi
+                  Kiralanan Ev Adresi <span className="text-danger">*</span>
                 </label>
                 <input
                   id={rentedAddressId}
                   className={fieldClassName}
                   value={form.rentedAddress}
                   onChange={(event) => updateField("rentedAddress", event.target.value)}
+                  placeholder="İstanbul, Beşiktaş, Barbaros Bulvarı No: 456"
                   required
                 />
+                <p className="text-xs text-muted/70">
+                  <span className="font-semibold">Örnek:</span> İzmir, Alsancak, Alsancak Cad.
+                </p>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor={problemTypeId} className="text-sm font-bold text-navy">
-                  Problem Türü
+                  Problem Türü <span className="text-danger">*</span>
                 </label>
                 <select
                   id={problemTypeId}
@@ -367,37 +405,56 @@ export default function HousingPetitionTool({
                   value={form.problemType}
                   onChange={(event) => updateField("problemType", event.target.value)}
                 >
+                  <option value="">Seçiniz</option>
                   {problemOptions.map((option) => (
-                    <option key={option}>{option}</option>
+                    <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
+                <p className="text-xs text-muted/70">
+                  Sorunun hangi kategoriye ait olduğunu seçin
+                </p>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor={institutionId} className="text-sm font-bold text-navy">
-                  İtiraz Edilen Kurum
+                  Mahkeme / Kurum Adı
                 </label>
                 <input
                   id={institutionId}
                   className={fieldClassName}
                   value={form.institution}
                   onChange={(event) => updateField("institution", event.target.value)}
+                  placeholder="Sulh Hukuk Mahkemesi"
                   required
                 />
+                <p className="text-xs text-muted/70">
+                  Boş bırakırsanız ceza yerine göre otomatik oluşturulur.
+                </p>
+              </div>
               </div>
             </div>
 
-            <div className="space-y-2">
+            {/* İTİRAZ DETAYLARı */}
+            <div>
+              <h3 className="mb-4 text-sm font-bold text-navy-deep">📝 İtiraz Detayları</h3>
+              <div className="grid gap-4">
+              <div className="space-y-2">
               <label htmlFor={explanationId} className="text-sm font-bold text-navy">
-                Açıklama
+                Sorun Açıklaması <span className="text-danger">*</span>
               </label>
               <textarea
                 id={explanationId}
                 className={textareaClassName}
                 value={form.explanation}
                 onChange={(event) => updateField("explanation", event.target.value)}
+                placeholder="Sorununuzu detaylı olarak açıklayın..."
                 required
               />
+              <p className="text-xs text-muted/70">
+                <span className="font-semibold">Örnek:</span> Ev sahibi aylık kira bedelini haksız yere %50 artırdı, sözleşme şartlarına aykırı...
+              </p>
+              </div>
+              </div>
             </div>
 
             <button type="submit" className={primaryButtonClassName} disabled={isLoading}>
