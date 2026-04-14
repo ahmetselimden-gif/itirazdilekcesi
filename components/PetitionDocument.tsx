@@ -6,13 +6,15 @@ type PetitionDocumentProps = {
 const SECTION_TITLES = new Set([
   "Başvuran Bilgileri",
   "Açıklamalar",
+  "Hukuki Nedenler",
   "Hukuki Gerekçe",
   "Talep",
   "Sonuç",
+  "Sonuç ve İstem",
 ]);
 
 function getLineClassName(trimmed: string) {
-  if (trimmed.startsWith("Konu:")) {
+  if (trimmed.startsWith("Konu:") || trimmed.startsWith("KONU:")) {
     return "petition-line petition-subject";
   }
 

@@ -4,6 +4,7 @@ import {
   buildPaytrIframeUrl,
   initializePaytrIframe,
 } from "@/lib/paytr";
+import { buildPaymentReturnUrl } from "@/lib/payment";
 import { verifyPetitionToken } from "@/lib/petitionToken";
 import { isTrustedOrigin } from "@/lib/requestSecurity";
 
@@ -29,11 +30,13 @@ export async function POST(request: Request) {
       fullName?: string;
       tckn?: string;
       petitionToken?: string;
+      returnPath?: string;
     };
 
     const fullName = body.fullName?.trim() || "";
     const tckn = body.tckn?.trim() || "";
     const petitionToken = body.petitionToken?.trim() || "";
+    const returnPath = body.returnPath?.trim() || "";
 
     if (!fullName || !petitionToken) {
       return NextResponse.json(
@@ -53,13 +56,12 @@ export async function POST(request: Request) {
 
     const merchantOid = buildMerchantOid();
     const appUrl = getAppUrl();
-    const okUrl = new URL("/", appUrl);
-    okUrl.searchParams.set("payment", "success");
-    okUrl.searchParams.set("oid", merchantOid);
-
-    const failUrl = new URL("/", appUrl);
-    failUrl.searchParams.set("payment", "failed");
-    failUrl.searchParams.set("message", "Ödeme tamamlanamadı.");
+    const okUrl = buildPaymentReturnUrl(appUrl, returnPath, "success", {
+      oid: merchantOid,
+    });
+    const failUrl = buildPaymentReturnUrl(appUrl, returnPath, "failed", {
+      message: "Ödeme tamamlanamadı.",
+    });
 
     const response = await initializePaytrIframe({
       merchantOid,

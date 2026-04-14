@@ -1,19 +1,31 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import FormField from "./FormField";
-import { getCourtInfo } from "@/lib/courts-info";
+import { FormEvent, useEffect, useId, useState } from "react";
+import PaymentButton from "@/components/PaymentButton";
+import PdfDownloadHandler from "@/components/PdfDownloadHandler";
+import PetitionPreview from "@/components/PetitionPreview";
+import {
+  PAYMENT_ACCESS_TOKEN_KEY,
+  PAYMENT_VERIFY_ENDPOINT,
+  getCheckoutSnapshotKey,
+} from "@/lib/payment";
 
 type HousingFormData = {
   fullName: string;
-  tcNumber?: string;
   address: string;
   counterpartyName: string;
   rentedAddress: string;
   problemType: string;
   explanation: string;
   institution: string;
-  olay_date?: string;
+};
+
+type HousingGenerationResult = {
+  petition: string;
+  evaluationLevel: "Düşük" | "Orta" | "Yüksek";
+  evaluationComment: string;
+  source: "openai" | "fallback";
+  petitionToken?: string;
 };
 
 type HousingPetitionToolProps = {
@@ -25,23 +37,30 @@ type HousingPetitionToolProps = {
   problemOptions: string[];
 };
 
+type SnapshotPayload = {
+  form: HousingFormData;
+  result: HousingGenerationResult;
+  showPayment: boolean;
+};
+
 const defaultForm = (problemType: string): HousingFormData => ({
   fullName: "",
-  tcNumber: "",
   address: "",
   counterpartyName: "",
   rentedAddress: "",
   problemType,
   explanation: "",
   institution: "",
-  olay_date: "",
 });
 
-const primaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-6 text-sm font-bold text-white transition duration-200 hover:bg-navy-deep hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
+const fieldClassName =
+  "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
 
-const secondaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-gold bg-gold px-6 text-sm font-bold text-white transition duration-200 hover:bg-gold/90 hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
+const textareaClassName =
+  "min-h-40 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] leading-7 text-ink outline-none transition duration-200 placeholder:text-muted/65 focus:border-navy focus:ring-4 focus:ring-navy/10";
+
+const primaryButtonClassName =
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
 
 export default function HousingPetitionTool({
   apiPath,
@@ -51,71 +70,213 @@ export default function HousingPetitionTool({
   counterpartyLabel,
   problemOptions,
 }: HousingPetitionToolProps) {
+  const panelKey = apiPath === "/api/kiraci" ? "kiraci" : "ev-sahibi";
+  const returnPath = apiPath === "/api/kiraci" ? "/kiraci" : "/ev-sahibi";
+  const fileName =
+    apiPath === "/api/kiraci"
+      ? "kiraci-itiraz-dilekcesi.pdf"
+      : "ev-sahibi-itiraz-dilekcesi.pdf";
+  const snapshotKey = getCheckoutSnapshotKey(panelKey);
+
+  const fullNameId = useId();
+  const addressId = useId();
+  const counterpartyNameId = useId();
+  const rentedAddressId = useId();
+  const problemTypeId = useId();
+  const explanationId = useId();
+  const institutionId = useId();
+
   const [form, setForm] = useState<HousingFormData>(() => defaultForm(problemOptions[0]));
-  const [petition, setPetition] = useState("");
+  const [result, setResult] = useState<HousingGenerationResult | null>(null);
   const [error, setError] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentStatusMessage, setPaymentStatusMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentReady, setPaymentReady] = useState(false);
+  const [paymentAccessToken, setPaymentAccessToken] = useState("");
+  const [approvalInfo, setApprovalInfo] = useState(false);
+  const [approvalKvkk, setApprovalKvkk] = useState(false);
 
   const updateField = (key: keyof HousingFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
-    if (formErrors[key]) {
-      setFormErrors((current) => ({ ...current, [key]: "" }));
-    }
   };
 
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-    if (!form.fullName.trim()) errors.fullName = "Ad Soyad boş geçilemez";
-    if (!form.address.trim()) errors.address = "Adres boş geçilemez";
-    if (!form.counterpartyName.trim()) errors.counterpartyName = "Karşı taraf adı boş geçilemez";
-    if (!form.rentedAddress.trim()) errors.rentedAddress = "Kiralanan ev adresi boş geçilemez";
-    if (!form.problemType) errors.problemType = "Problem türü seçiniz";
-    if (!form.institution.trim()) errors.institution = "İtiraz edilen kurum boş geçilemez";
-    if (!form.explanation.trim()) errors.explanation = "Açıklama boş geçilemez";
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
 
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    const rawSnapshot = window.sessionStorage.getItem(snapshotKey);
+    let restoredPetitionToken = "";
+
+    if (rawSnapshot) {
+      try {
+        const snapshot = JSON.parse(rawSnapshot) as SnapshotPayload;
+        setForm(snapshot.form);
+        setResult(snapshot.result);
+        setShowPayment(snapshot.showPayment);
+        restoredPetitionToken = snapshot.result.petitionToken || "";
+      } catch {
+        window.sessionStorage.removeItem(snapshotKey);
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    const access =
+      params.get("access") || window.sessionStorage.getItem(PAYMENT_ACCESS_TOKEN_KEY);
+    const merchantOid = params.get("oid") || "";
+    const message = params.get("message");
+
+    if (message) {
+      setPaymentError(message);
+    }
+
+    if (payment === "failed") {
+      setShowPayment(true);
+      setPaymentReady(false);
+    }
+
+    const verifyPaytrOrder = async (oid: string, petitionToken: string) => {
+      try {
+        const response = await fetch(PAYMENT_VERIFY_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            oid,
+            petitionToken,
+          }),
+        });
+        const data = (await response.json()) as {
+          valid?: boolean;
+          error?: string;
+          accessToken?: string;
+        };
+
+        if (!response.ok || !data.valid || !data.accessToken) {
+          setShowPayment(true);
+          setPaymentReady(false);
+          setPaymentAccessToken("");
+          setPaymentError(data.error || "PayTR ödeme sonucu doğrulanamadı.");
+          window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
+          return;
+        }
+
+        setShowPayment(true);
+        setPaymentReady(true);
+        setPaymentAccessToken(data.accessToken);
+        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, data.accessToken);
+      } catch {
+        setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
+      }
+    };
+
+    const verifyToken = async (token: string) => {
+      try {
+        const response = await fetch(
+          `/api/payments/access?token=${encodeURIComponent(token)}`
+        );
+        const data = (await response.json()) as { valid?: boolean; error?: string };
+
+        if (!response.ok || !data.valid) {
+          setPaymentReady(false);
+          setPaymentAccessToken("");
+          setPaymentError(data.error || "Ödeme doğrulanamadı.");
+          window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
+          return;
+        }
+
+        setShowPayment(true);
+        setPaymentReady(true);
+        setPaymentAccessToken(token);
+        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, token);
+      } catch {
+        setPaymentError("Ödeme doğrulaması sırasında bağlantı hatası oluştu.");
+      }
+    };
+
+    if (access) {
+      void verifyToken(access);
+    }
+
+    if (payment === "success" && merchantOid && restoredPetitionToken) {
+      void verifyPaytrOrder(merchantOid, restoredPetitionToken);
+    }
+
+    if (payment || access || message) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [snapshotKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !result) {
+      return;
+    }
+
+    const snapshot: SnapshotPayload = {
+      form,
+      result,
+      showPayment,
+    };
+
+    window.sessionStorage.setItem(snapshotKey, JSON.stringify(snapshot));
+  }, [form, result, showPayment, snapshotKey]);
+
+  const validateForm = () => {
+    if (
+      !form.fullName.trim() ||
+      !form.address.trim() ||
+      !form.counterpartyName.trim() ||
+      !form.rentedAddress.trim() ||
+      !form.problemType.trim() ||
+      !form.explanation.trim() ||
+      !form.institution.trim()
+    ) {
+      return "Lütfen zorunlu alanların tamamını doldurun.";
+    }
+
+    return "";
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
-    setPetition("");
+    setPaymentError("");
+    setPaymentStatusMessage("");
+    setIsLoading(true);
+    setShowPayment(false);
+    setPaymentReady(false);
+    setPaymentAccessToken("");
 
-    if (!validateForm()) {
-      setError("❌ Lütfen tüm alanları doldurun");
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      // Only send required fields to API
-      const apiData = {
-        fullName: form.fullName,
-        address: form.address,
-        counterpartyName: form.counterpartyName,
-        rentedAddress: form.rentedAddress,
-        problemType: form.problemType,
-        explanation: form.explanation,
-        institution: form.institution,
-      };
-
       const response = await fetch(apiPath, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(apiData),
+        body: JSON.stringify(form),
       });
-      const data = (await response.json()) as { petition?: string; error?: string };
+      const data = (await response.json()) as HousingGenerationResult | { error?: string };
 
-      if (!response.ok || !data.petition) {
-        throw new Error(data.error || "Dilekçe oluşturulamadı.");
+      if (!response.ok || !("petition" in data)) {
+        throw new Error(("error" in data && data.error) || "Dilekçe oluşturulamadı.");
       }
 
-      setPetition(data.petition);
+      setResult(data);
+      window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -126,64 +287,6 @@ export default function HousingPetitionTool({
       setIsLoading(false);
     }
   };
-
-  const handlePdfDownload = async () => {
-    try {
-      setError("");
-      setIsLoading(true);
-
-      const type = apiPath === "/api/kiraci" ? "kiraci" : "evsahibi";
-
-      // Only send required fields to API
-      const apiFormData = {
-        fullName: form.fullName,
-        address: form.address,
-        counterpartyName: form.counterpartyName,
-        rentedAddress: form.rentedAddress,
-        problemType: form.problemType,
-        explanation: form.explanation,
-        institution: form.institution,
-      };
-
-      // Initialize PayTR payment
-      const response = await fetch("/api/odeme/paytr", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type,
-          product: "housing-pdf",
-          formData: apiFormData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Ödeme sistemi başlatılamadı");
-      }
-
-      const data = (await response.json()) as { success?: boolean; redirectUrl?: string; error?: string };
-
-      if (!data.success || !data.redirectUrl) {
-        throw new Error(data.error || "Ödeme başlatılamadı");
-      }
-
-      window.location.href = data.redirectUrl;
-    } catch (downloadError) {
-      setError(
-        downloadError instanceof Error
-          ? downloadError.message
-          : "PDF indirme işlemi başarısız oldu. Lütfen tekrar deneyin."
-      );
-      setIsLoading(false);
-    }
-  };
-
-  const courtInfo =
-    form.problemType && (getCourtInfo(
-      apiPath === "/api/kiraci" ? "kiraci" : "evsahibi",
-      form.problemType
-    ) || null);
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-line/80 bg-surface shadow-[0_24px_60px_rgba(17,34,51,0.08)]">
@@ -199,192 +302,235 @@ export default function HousingPetitionTool({
       </div>
 
       <div className="grid gap-6 px-5 py-6 sm:px-8 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)]">
-        {/* FORM SECTION */}
         <div className="rounded-[24px] border border-line/80 bg-[linear-gradient(180deg,#fffdf9_0%,#f9f6ef_100%)] p-5 sm:p-6">
-          {/* TALIMATLAR */}
-          <div className="mb-6 rounded-lg border border-gold/30 bg-gold-soft/30 p-4">
-            <p className="text-sm font-bold text-navy">📋 TALIMATLAR</p>
-            <ul className="mt-3 space-y-2 text-xs text-muted">
-              <li>✓ Tüm alanları doldurun (hepsi zorunlu)</li>
-              <li>✓ Her alana doğru bilgi girin</li>
-              <li>✓ Dilekçeyi kontrol edin</li>
-              <li>✓ PDF&apos;i indirin veya kopyalayıp mahkemeye gönderin</li>
-              <li>⚠️ Dilekçe imzalanmalıdır ve 15 gün içinde sunulmalıdır</li>
-            </ul>
-          </div>
-
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* KİŞİSEL BİLGİLER */}
-            <div>
-              <h3 className="mb-4 text-sm font-bold text-navy-deep">👤 Kişisel Bilgiler</h3>
-              <div className="grid gap-4 md:grid-cols-2">
-                <FormField
-                  id="fullName"
-                  label="Ad Soyad"
-                  placeholder="Ali Yılmaz"
-                  hint="Dilekçeyi sunacak kişinin tam adı"
-                  example="Örnek: Mehmet Ahmet Çelik"
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <label htmlFor={fullNameId} className="text-sm font-bold text-navy">
+                  Ad Soyad
+                </label>
+                <input
+                  id={fullNameId}
+                  className={fieldClassName}
                   value={form.fullName}
-                  onChange={(val) => updateField("fullName", val)}
-                  error={formErrors.fullName}
-                  required={true}
+                  onChange={(event) => updateField("fullName", event.target.value)}
+                  required
                 />
-                <FormField
-                  id="tcNumber"
-                  label="TC Kimlik No"
-                  placeholder="12345678901"
-                  hint="Dilekçeyi sunacak kişinin TC kimlik numarası"
-                  example="Örnek: 12345678901"
-                  value={form.tcNumber || ""}
-                  onChange={(val) => updateField("tcNumber", val)}
-                  required={false}
-                />
-                <FormField
-                  id="address"
-                  label="Adres"
-                  placeholder="Mahallesi, Sokağı, No:..."
-                  hint="Başvuranın ikametgahı (tam adres)"
-                  example="Örnek: Çemberlitaş Mah. Divan Yolu Cad. No:25 Fatih/İstanbul"
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor={addressId} className="text-sm font-bold text-navy">
+                  Adres
+                </label>
+                <input
+                  id={addressId}
+                  className={fieldClassName}
                   value={form.address}
-                  onChange={(val) => updateField("address", val)}
-                  error={formErrors.address}
-                  required={true}
+                  onChange={(event) => updateField("address", event.target.value)}
+                  required
                 />
               </div>
-            </div>
 
-            {/* UYUŞMAZLIK DETAYLARı */}
-            <div>
-              <h3 className="mb-4 text-sm font-bold text-navy-deep">⚖️ Uyuşmazlık Detayları</h3>
-              <div className="grid gap-4">
-                <FormField
-                  id="counterpartyName"
-                  label={counterpartyLabel}
-                  placeholder="Karşı tarafın adı..."
-                  hint={counterpartyLabel === "Ev Sahibi Adı" ? "Ev sahibinin tam adı" : "Kiracının tam adı"}
-                  example="Örnek: Fatma Demir"
+              <div className="space-y-2">
+                <label htmlFor={counterpartyNameId} className="text-sm font-bold text-navy">
+                  {counterpartyLabel}
+                </label>
+                <input
+                  id={counterpartyNameId}
+                  className={fieldClassName}
                   value={form.counterpartyName}
-                  onChange={(val) => updateField("counterpartyName", val)}
-                  error={formErrors.counterpartyName}
+                  onChange={(event) => updateField("counterpartyName", event.target.value)}
+                  required
                 />
+              </div>
 
-                <FormField
-                  id="rentedAddress"
-                  label="Kiralanan Ev Adresi"
-                  placeholder="Mahallesi, Sokağı, Apartman No:..."
-                  hint="Uyuşmazlığa konu olan taşınmazın tam adresi"
-                  example="Örnek: Beşiktaş Mah. Barbaros Bulvarı No:45 D:3 Beşiktaş/İstanbul"
+              <div className="space-y-2">
+                <label htmlFor={rentedAddressId} className="text-sm font-bold text-navy">
+                  Kiralanan Ev Adresi
+                </label>
+                <input
+                  id={rentedAddressId}
+                  className={fieldClassName}
                   value={form.rentedAddress}
-                  onChange={(val) => updateField("rentedAddress", val)}
-                  error={formErrors.rentedAddress}
+                  onChange={(event) => updateField("rentedAddress", event.target.value)}
+                  required
                 />
+              </div>
 
-                <FormField
-                  id="problemType"
-                  label="Problem Türü"
-                  type="select"
-                  selectOptions={problemOptions.map((opt) => ({ value: opt, label: opt }))}
-                  hint="Yaşadığınız sorunun türünü seçin"
+              <div className="space-y-2">
+                <label htmlFor={problemTypeId} className="text-sm font-bold text-navy">
+                  Problem Türü
+                </label>
+                <select
+                  id={problemTypeId}
+                  className={fieldClassName}
                   value={form.problemType}
-                  onChange={(val) => updateField("problemType", val)}
-                  error={formErrors.problemType}
-                />
+                  onChange={(event) => updateField("problemType", event.target.value)}
+                >
+                  {problemOptions.map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
 
-                <FormField
-                  id="institution"
-                  label="İtiraz Edilen Kurum"
-                  placeholder="Mahkeme adı (Sulh Hukuk Mahkemesi vb.)"
-                  hint="Dilekçeyi sunacağınız mahkeme veya kurum"
-                  example={courtInfo ? `Örnek: ${courtInfo.name}` : "Örnek: Sulh Hukuk Mahkemesi"}
+              <div className="space-y-2">
+                <label htmlFor={institutionId} className="text-sm font-bold text-navy">
+                  İtiraz Edilen Kurum
+                </label>
+                <input
+                  id={institutionId}
+                  className={fieldClassName}
                   value={form.institution}
-                  onChange={(val) => updateField("institution", val)}
-                  error={formErrors.institution}
-                />
-
-                <FormField
-                  id="explanation"
-                  label="Olay Açıklaması"
-                  type="textarea"
-                  placeholder="Sorunun detaylı açıklamasını yazın..."
-                  hint="Probleminizi ayrıntılı şekilde anlatın"
-                  example="Örnek: Ev sahibi 2024 başında kira artışı bildiriminde bulundu. Ancak bildirimi TÜFE oranını aştığı için haksız buluyorum..."
-                  value={form.explanation}
-                  onChange={(val) => updateField("explanation", val)}
-                  error={formErrors.explanation}
-                  required={true}
-                />
-
-                <FormField
-                  id="olay_date"
-                  label="Olay Tarihi"
-                  type="date"
-                  hint="Sorunun başladığı tarih"
-                  value={form.olay_date || ""}
-                  onChange={(val) => updateField("olay_date", val)}
-                  required={false}
+                  onChange={(event) => updateField("institution", event.target.value)}
+                  required
                 />
               </div>
             </div>
 
-            {error && (
-              <div className="rounded-lg border border-danger/25 bg-danger/5 p-4">
-                <p className="text-sm text-danger">{error}</p>
-              </div>
-            )}
+            <div className="space-y-2">
+              <label htmlFor={explanationId} className="text-sm font-bold text-navy">
+                Açıklama
+              </label>
+              <textarea
+                id={explanationId}
+                className={textareaClassName}
+                value={form.explanation}
+                onChange={(event) => updateField("explanation", event.target.value)}
+                required
+              />
+            </div>
 
             <button type="submit" className={primaryButtonClassName} disabled={isLoading}>
-              {isLoading ? "⏳ Dilekçe oluşturuluyor..." : "✍️ Dilekçemi Oluştur"}
+              {isLoading ? "Dilekçe oluşturuluyor..." : "Dilekçemi Oluştur"}
             </button>
+
+            {error ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-danger">
+                {error}
+              </div>
+            ) : null}
           </form>
         </div>
 
-        {/* PREVIEW SECTION */}
-        <div className="rounded-[24px] border border-line/80 bg-surface-soft p-5 sm:p-6">
-          <h2 className="mb-4 text-lg font-bold text-navy-deep">👀 Dilekçe Önizleme</h2>
+        <div className="space-y-4">
+          <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
+            {!result ? (
+              <div className="flex min-h-80 items-center justify-center rounded-[20px] border border-dashed border-line bg-surface-soft px-6 text-center text-[15px] leading-8 text-muted">
+                Formu doldurduktan sonra dilekçe metni burada resmi evrak düzenine yakın bir
+                önizleme olarak gösterilecektir.
+              </div>
+            ) : (
+              <>
+                <div className="rounded-[20px] border border-line bg-surface-soft p-5">
+                  <h4 className="text-base font-bold text-navy">Değerlendirme</h4>
+                  <div className="mt-3 flex items-center justify-between gap-4 border-b border-line/80 pb-3 text-sm text-navy">
+                    <span>Dilekçe gücü</span>
+                    <strong className="text-base">{result.evaluationLevel}</strong>
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-muted">
+                    {result.evaluationComment}
+                  </p>
+                </div>
 
-          {courtInfo && form.problemType && (
-            <div className="mb-4 rounded-lg border border-gold/30 bg-gold-soft/30 p-4">
-              <p className="text-xs font-bold text-navy">📍 Dilekçe Sunma Bilgileri</p>
-              <div className="mt-3 space-y-2 text-xs text-muted">
-                <p><span className="font-semibold">Mahkeme:</span> {courtInfo.name}</p>
-                <p><span className="font-semibold">Adres:</span> {courtInfo.address}</p>
-                <p><span className="font-semibold">Telefon:</span> {courtInfo.phone}</p>
-                {courtInfo.note && (
-                  <p><span className="font-semibold">Not:</span> {courtInfo.note}</p>
-                )}
+                <div className="mt-5">
+                  <h3 className="font-display text-3xl text-navy-deep">Dilekçe Önizleme</h3>
+                  <p className="mt-2 text-sm leading-7 text-muted">
+                    PDF çıktısına yalnızca dilekçe metni dahil edilir.
+                  </p>
+                </div>
+
+                <PetitionPreview petition={result.petition} />
+
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <button
+                    type="button"
+                    className={`${primaryButtonClassName} w-full sm:w-auto`}
+                    onClick={() => setShowPayment(true)}
+                  >
+                    PDF indir (Ücretli)
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {result && showPayment ? (
+            <div className="rounded-[24px] border border-line/80 bg-surface p-5 shadow-[0_18px_40px_rgba(17,34,51,0.05)] sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="font-display text-3xl text-navy-deep">Güvenli Ödeme</h3>
+                <span className="inline-flex items-center rounded-full border border-line bg-surface-soft px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-navy">
+                  PayTR
+                </span>
+              </div>
+              <p className="mt-3 text-[15px] leading-8 text-muted">
+                PDF indirme işlemi, ödeme doğrulandıktan sonra aktif olur.
+              </p>
+
+              <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
+                <div>
+                  <h4 className="text-sm font-bold text-navy">Ön Bilgilendirme</h4>
+                  <p className="mt-2 text-sm leading-7 text-muted">
+                    Hizmet, kullanıcı tarafından girilen bilgilere göre dijital dilekçe PDF&apos;i
+                    oluşturulmasıdır. Teslimat, ödeme sonrası dijital olarak anında yapılır.
+                  </p>
+                </div>
+
+                <label className="flex items-start gap-3 rounded-xl border border-line/80 bg-white px-4 py-3 text-sm text-ink">
+                  <input
+                    type="checkbox"
+                    className="mt-1"
+                    checked={approvalInfo}
+                    onChange={(event) => setApprovalInfo(event.target.checked)}
+                  />
+                  <span>Mesafeli Satış Sözleşmesini okudum, onaylıyorum.</span>
+                </label>
+
+                <label className="flex items-start gap-3 rounded-xl border border-line/80 bg-white px-4 py-3 text-sm text-ink">
+                  <input
+                    type="checkbox"
+                    className="mt-1"
+                    checked={approvalKvkk}
+                    onChange={(event) => setApprovalKvkk(event.target.checked)}
+                  />
+                  <span>KVKK Aydınlatma Metni&apos;ni okudum.</span>
+                </label>
+              </div>
+
+              {paymentStatusMessage ? (
+                <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-7 text-emerald-800">
+                  {paymentStatusMessage}
+                </div>
+              ) : null}
+
+              {paymentError ? (
+                <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-danger">
+                  {paymentError}
+                </div>
+              ) : null}
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <PaymentButton
+                  fullName={form.fullName}
+                  petitionToken={result.petitionToken}
+                  returnPath={returnPath}
+                  disabled={!approvalInfo || !approvalKvkk}
+                  isLoading={isPaymentLoading}
+                  onLoadingChange={setIsPaymentLoading}
+                  onError={setPaymentError}
+                >
+                  Ödeme Yap
+                </PaymentButton>
+                <PdfDownloadHandler
+                  fileName={fileName}
+                  accessToken={paymentAccessToken}
+                  petitionToken={result.petitionToken}
+                  autoStart={paymentReady}
+                  onError={setPaymentError}
+                  disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}
+                />
               </div>
             </div>
-          )}
-
-          {petition ? (
-            <div>
-              <pre className="max-h-96 overflow-auto rounded-lg border border-line bg-white p-4 text-xs leading-6 text-ink whitespace-pre-wrap break-words">
-                {petition}
-              </pre>
-
-              <div className="mt-4 flex gap-3">
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(petition);
-                    alert("✅ Dilekçe kopyalandı!");
-                  }}
-                  className={primaryButtonClassName}
-                >
-                  📋 Kopyala
-                </button>
-                <button
-                  onClick={handlePdfDownload}
-                  className={secondaryButtonClassName}
-                >
-                  📥 PDF İndir (19.99₺)
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-line/50 bg-surface-soft p-4 text-center">
-              <p className="text-sm text-muted">Formu doldurduktan sonra dilekçe metni burada görünecektir.</p>
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
     </section>

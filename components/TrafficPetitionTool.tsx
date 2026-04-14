@@ -4,6 +4,12 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import PetitionDocument from "@/components/PetitionDocument";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import {
+  PAYMENT_ACCESS_TOKEN_KEY,
+  PAYMENT_INITIATE_ENDPOINT,
+  PAYMENT_VERIFY_ENDPOINT,
+  getCheckoutSnapshotKey,
+} from "@/lib/payment";
 import type {
   TrafficFormData,
   TrafficGenerationResult,
@@ -22,8 +28,7 @@ const defaultForm: TrafficFormData = {
   explanation: "",
 };
 
-const SNAPSHOT_KEY = "petition_checkout_snapshot_v2";
-const ACCESS_TOKEN_KEY = "petition_payment_access_v2";
+const SNAPSHOT_KEY = getCheckoutSnapshotKey("trafik");
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const fieldClassName =
@@ -123,7 +128,7 @@ export default function TrafficPetitionTool() {
     const params = new URLSearchParams(window.location.search);
     const payment = params.get("payment");
     const access =
-      params.get("access") || window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
+      params.get("access") || window.sessionStorage.getItem(PAYMENT_ACCESS_TOKEN_KEY);
     const merchantOid = params.get("oid") || "";
     const message = params.get("message");
     const restoredPetitionToken = rawSnapshot
@@ -148,7 +153,7 @@ export default function TrafficPetitionTool() {
 
     const verifyPaytrOrder = async (oid: string, petitionToken: string) => {
       try {
-        const response = await fetch("/api/payments/paytr/verify", {
+        const response = await fetch(PAYMENT_VERIFY_ENDPOINT, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -169,7 +174,7 @@ export default function TrafficPetitionTool() {
           setPaymentReady(false);
           setPaymentAccessToken("");
           setPaymentError(data.error || "PayTR ödeme sonucu doğrulanamadı.");
-          window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+          window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
           return;
         }
 
@@ -177,7 +182,7 @@ export default function TrafficPetitionTool() {
         setPaymentReady(true);
         setPaymentAccessToken(data.accessToken);
         setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
-        window.sessionStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
+        window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, data.accessToken);
       } catch {
         setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
       }
@@ -194,7 +199,7 @@ export default function TrafficPetitionTool() {
           setPaymentReady(false);
           setPaymentAccessToken("");
           setPaymentError(data.error || "Ödeme doğrulanamadı.");
-          window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+          window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
           return;
         }
 
@@ -204,7 +209,7 @@ export default function TrafficPetitionTool() {
         setPaymentStatusMessage(
           "Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz."
         );
-        window.sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+        window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, token);
       } catch {
         setPaymentError("Ödeme doğrulaması sırasında bağlantı hatası oluştu.");
       }
@@ -283,7 +288,7 @@ export default function TrafficPetitionTool() {
       }
 
       setResult(data);
-      window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
       setTurnstileToken("");
     } catch (requestError) {
       setError(
@@ -309,7 +314,7 @@ export default function TrafficPetitionTool() {
     setIsPaymentLoading(true);
 
     try {
-      const response = await fetch("/api/payments/paytr/initiate", {
+      const response = await fetch(PAYMENT_INITIATE_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -318,6 +323,7 @@ export default function TrafficPetitionTool() {
           fullName: form.fullName,
           tckn: form.tckn,
           petitionToken: result?.petitionToken,
+          returnPath: "/trafik-cezasi-itiraz",
         }),
       });
 
