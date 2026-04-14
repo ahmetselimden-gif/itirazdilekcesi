@@ -6,12 +6,14 @@ import { getCourtInfo } from "@/lib/courts-info";
 
 type HousingFormData = {
   fullName: string;
+  tcNumber?: string;
   address: string;
   counterpartyName: string;
   rentedAddress: string;
   problemType: string;
   explanation: string;
   institution: string;
+  olay_date?: string;
 };
 
 type HousingPetitionToolProps = {
@@ -25,19 +27,21 @@ type HousingPetitionToolProps = {
 
 const defaultForm = (problemType: string): HousingFormData => ({
   fullName: "",
+  tcNumber: "",
   address: "",
   counterpartyName: "",
   rentedAddress: "",
   problemType,
   explanation: "",
   institution: "",
+  olay_date: "",
 });
 
 const primaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-55";
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-6 text-sm font-bold text-white transition duration-200 hover:bg-navy-deep hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
 const secondaryButtonClassName =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-gold bg-gold px-5 text-sm font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-gold/90 disabled:cursor-not-allowed disabled:opacity-55";
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-gold bg-gold px-6 text-sm font-bold text-white transition duration-200 hover:bg-gold/90 hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
 export default function HousingPetitionTool({
   apiPath,
@@ -87,12 +91,23 @@ export default function HousingPetitionTool({
     setIsLoading(true);
 
     try {
+      // Only send required fields to API
+      const apiData = {
+        fullName: form.fullName,
+        address: form.address,
+        counterpartyName: form.counterpartyName,
+        rentedAddress: form.rentedAddress,
+        problemType: form.problemType,
+        explanation: form.explanation,
+        institution: form.institution,
+      };
+
       const response = await fetch(apiPath, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(apiData),
       });
       const data = (await response.json()) as { petition?: string; error?: string };
 
@@ -119,6 +134,17 @@ export default function HousingPetitionTool({
 
       const type = apiPath === "/api/kiraci" ? "kiraci" : "evsahibi";
 
+      // Only send required fields to API
+      const apiFormData = {
+        fullName: form.fullName,
+        address: form.address,
+        counterpartyName: form.counterpartyName,
+        rentedAddress: form.rentedAddress,
+        problemType: form.problemType,
+        explanation: form.explanation,
+        institution: form.institution,
+      };
+
       // Initialize PayTR payment
       const response = await fetch("/api/odeme/paytr", {
         method: "POST",
@@ -128,7 +154,7 @@ export default function HousingPetitionTool({
         body: JSON.stringify({
           type,
           product: "housing-pdf",
-          formData: form,
+          formData: apiFormData,
         }),
       });
 
@@ -187,7 +213,7 @@ export default function HousingPetitionTool({
             </ul>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* KİŞİSEL BİLGİLER */}
             <div>
               <h3 className="mb-4 text-sm font-bold text-navy-deep">👤 Kişisel Bilgiler</h3>
@@ -201,6 +227,17 @@ export default function HousingPetitionTool({
                   value={form.fullName}
                   onChange={(val) => updateField("fullName", val)}
                   error={formErrors.fullName}
+                  required={true}
+                />
+                <FormField
+                  id="tcNumber"
+                  label="TC Kimlik No"
+                  placeholder="12345678901"
+                  hint="Dilekçeyi sunacak kişinin TC kimlik numarası"
+                  example="Örnek: 12345678901"
+                  value={form.tcNumber || ""}
+                  onChange={(val) => updateField("tcNumber", val)}
+                  required={false}
                 />
                 <FormField
                   id="address"
@@ -211,6 +248,7 @@ export default function HousingPetitionTool({
                   value={form.address}
                   onChange={(val) => updateField("address", val)}
                   error={formErrors.address}
+                  required={true}
                 />
               </div>
             </div>
@@ -265,7 +303,7 @@ export default function HousingPetitionTool({
 
                 <FormField
                   id="explanation"
-                  label="Açıklama"
+                  label="Olay Açıklaması"
                   type="textarea"
                   placeholder="Sorunun detaylı açıklamasını yazın..."
                   hint="Probleminizi ayrıntılı şekilde anlatın"
@@ -273,6 +311,17 @@ export default function HousingPetitionTool({
                   value={form.explanation}
                   onChange={(val) => updateField("explanation", val)}
                   error={formErrors.explanation}
+                  required={true}
+                />
+
+                <FormField
+                  id="olay_date"
+                  label="Olay Tarihi"
+                  type="date"
+                  hint="Sorunun başladığı tarih"
+                  value={form.olay_date || ""}
+                  onChange={(val) => updateField("olay_date", val)}
+                  required={false}
                 />
               </div>
             </div>

@@ -7,7 +7,7 @@ type FormFieldProps = {
   value: string;
   onChange: (value: string) => void;
   error?: string;
-  type?: "text" | "email" | "tel" | "textarea" | "select";
+  type?: "text" | "email" | "tel" | "textarea" | "select" | "date";
   selectOptions?: { value: string; label: string }[];
   required?: boolean;
 };
