@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import LegalSeoPage from "@/components/LegalSeoPage";
-import { getProgrammaticSeoPage, programmaticSeoPages } from "@/lib/seoContent";
+import { getProgrammaticSeoPage, publishedProgrammaticSeoPages } from "@/lib/seoContent";
 import { buildSeoMetadata } from "@/lib/seoMetadata";
 
 type PageProps = {
@@ -10,7 +10,7 @@ type PageProps = {
 };
 
 export function generateStaticParams() {
-  return programmaticSeoPages.map((page) => ({
+  return publishedProgrammaticSeoPages.map((page) => ({
     slug: page.slug,
   }));
 }

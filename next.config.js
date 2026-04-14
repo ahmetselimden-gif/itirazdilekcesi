@@ -6,6 +6,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/dilekce/kira-artisi-itiraz-dilekcesi",
+        destination: "/dilekce/kira-artisi-itiraz",
+        permanent: true,
+      },
+      {
+        source: "/dilekce/tahliye-itiraz-dilekcesi",
+        destination: "/dilekce/tahliye-itiraz",
+        permanent: true,
+      },
+      {
         source: "/:path*",
         has: [
           {

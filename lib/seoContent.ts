@@ -222,6 +222,81 @@ export const coreSeoPages: SeoPageContent[] = [
 
 export const programmaticSeoPages: SeoPageContent[] = [
   {
+    slug: "kira-artisi-itiraz",
+    path: "/dilekce/kira-artisi-itiraz",
+    panelPath: "/kiraci",
+    title: "Kira Artışı İtiraz Dilekçesi (2026 Güncel)",
+    metaTitle: "Kira Artışı İtiraz Dilekçesi (2026 Güncel)",
+    description:
+      "Kira artışı itiraz dilekçesi, ev sahibi tarafından yapılan yüksek kira artışlarına karşı kiracıların başvurabileceği resmi bir belgedir.",
+    keywords: ["kira artışı itiraz dilekçesi", "haksız kira artışı", "kiracı kira artışı itiraz"],
+    eyebrow: "Kira artışı",
+    ctaLabel: "Kira artışı itiraz dilekçesi oluştur",
+    sections: [
+      {
+        heading: "Kira Artışı İtiraz Dilekçesi",
+        paragraphs: [
+          "Kira artışı itiraz dilekçesi, ev sahibi tarafından yapılan yüksek kira artışlarına karşı kiracıların başvurabileceği resmi bir belgedir. Türkiye’de kira artış oranları yasal sınırlar içerisinde belirlenir ve bu sınırların üzerinde yapılan artışlar için itiraz hakkı bulunmaktadır.",
+          "Kiracılar, haksız kira artışı durumunda mahkemeye başvurmadan önce dilekçe ile itiraz sürecini başlatabilirler. Bu dilekçe, ilgili kurumlara sunularak hukuki sürecin ilk adımı olarak kullanılabilir.",
+          "Aşağıdaki formu doldurarak kendi durumunuza uygun kira artışı itiraz dilekçesini hızlıca oluşturabilirsiniz.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Kira artışı ne kadar olabilir?",
+        answer: "Yasal olarak kira artışları TÜFE oranına göre belirlenir.",
+      },
+      {
+        question: "Kira artışına nasıl itiraz edilir?",
+        answer: "Hazırlanan dilekçe ile ilgili kurumlara başvuru yapılabilir.",
+      },
+      {
+        question: "İtiraz süresi var mı?",
+        answer: "Duruma göre değişmekle birlikte gecikmeden başvuru yapılması önerilir.",
+      },
+    ],
+  },
+  {
+    slug: "tahliye-itiraz",
+    path: "/dilekce/tahliye-itiraz",
+    panelPath: "/kiraci",
+    title: "Tahliye İtiraz Dilekçesi (2026 Güncel)",
+    metaTitle: "Tahliye İtiraz Dilekçesi (2026 Güncel)",
+    description:
+      "Tahliye itiraz dilekçesi, kiracıların tahliye talebi veya tahliye baskısına karşı itirazlarını resmi şekilde sunmak için kullanabileceği bir belgedir.",
+    keywords: ["tahliye itiraz dilekçesi", "tahliye baskısı", "kiracı tahliye itiraz"],
+    eyebrow: "Tahliye itirazı",
+    ctaLabel: "Tahliye itiraz dilekçesi oluştur",
+    sections: [
+      {
+        heading: "Tahliye İtiraz Dilekçesi",
+        paragraphs: [
+          "Tahliye itiraz dilekçesi, kiracıların tahliye talebi veya tahliye baskısına karşı itirazlarını resmi şekilde sunmak için kullanabileceği bir belgedir. Kiracının tahliye talebine neden karşı çıktığı, olayın tarihleri ve varsa yazılı bildirimler dilekçede açıkça belirtilmelidir.",
+          "Tahliye sürecinde dilekçe hazırlanırken kira sözleşmesi, bildirim tarihi, tahliye gerekçesi ve tarafların bilgileri dikkatle yazılmalıdır. Bu bilgiler, itirazın anlaşılır ve düzenli şekilde değerlendirilmesine yardımcı olur.",
+          "Aşağıdaki formu doldurarak kendi durumunuza uygun tahliye itiraz dilekçesini hızlıca oluşturabilirsiniz.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Tahliye talebine itiraz edilebilir mi?",
+        answer:
+          "Kiracı, haksız veya hukuki dayanağı tartışmalı tahliye taleplerine karşı dilekçe ile itiraz edebilir.",
+      },
+      {
+        question: "Tahliye itiraz dilekçesinde hangi bilgiler yer alır?",
+        answer:
+          "Kira sözleşmesi bilgileri, tahliye bildirimi, kiralanan adres, taraf bilgileri ve itiraz açıklaması yer almalıdır.",
+      },
+      {
+        question: "Tahliye itirazı ne zaman yapılmalıdır?",
+        answer:
+          "Hak kaybı yaşanmaması için tahliye talebi öğrenildikten sonra gecikmeden başvuru yapılması önerilir.",
+      },
+    ],
+  },
+  {
     slug: "kira-artisi-itiraz-dilekcesi",
     path: "/dilekce/kira-artisi-itiraz-dilekcesi",
     panelPath: "/kiraci",
@@ -430,8 +505,17 @@ export const programmaticSeoPages: SeoPageContent[] = [
   },
 ];
 
-export const allSeoPages = [...coreSeoPages, ...programmaticSeoPages];
+const legacyProgrammaticSeoSlugs = new Set([
+  "kira-artisi-itiraz-dilekcesi",
+  "tahliye-itiraz-dilekcesi",
+]);
+
+export const publishedProgrammaticSeoPages = programmaticSeoPages.filter(
+  (page) => !legacyProgrammaticSeoSlugs.has(page.slug),
+);
+
+export const allSeoPages = [...coreSeoPages, ...publishedProgrammaticSeoPages];
 
 export function getProgrammaticSeoPage(slug: string) {
-  return programmaticSeoPages.find((page) => page.slug === slug);
+  return publishedProgrammaticSeoPages.find((page) => page.slug === slug);
 }
