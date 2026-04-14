@@ -1,8 +1,26 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Script from "next/script";
+import { allSeoPages } from "@/lib/seoContent";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
+
+export const metadata: Metadata = {
+  title: "İtiraz Dilekçesi Hazırla | Trafik, Kiracı ve Ev Sahibi",
+  description:
+    "Trafik cezası, kiracı ve ev sahibi itiraz dilekçesi hazırlama panelleri. Dakikalar içinde dilekçe oluşturun ve PDF olarak indirin.",
+  keywords: [
+    "itiraz dilekçesi hazırla",
+    "trafik cezası itiraz dilekçesi",
+    "kiracı itiraz dilekçesi",
+    "ev sahibi itiraz dilekçesi",
+    "dilekçe oluşturma",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+};
 
 const panelItems = [
   {
@@ -140,6 +158,24 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </article>
             )
           )}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl rounded-[24px] border border-line/80 bg-surface px-5 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">
+        <h2 className="font-display text-3xl text-navy-deep">Popüler dilekçe rehberleri</h2>
+        <p className="mt-3 text-[15px] leading-8 text-muted">
+          En çok aranan itiraz dilekçesi konularını inceleyin ve ihtiyacınıza uygun panele geçin.
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {allSeoPages.slice(0, 8).map((page) => (
+            <Link
+              key={page.path}
+              href={page.path}
+              className="rounded-lg border border-line bg-surface-soft p-4 text-sm font-bold leading-7 text-navy transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+            >
+              {page.title}
+            </Link>
+          ))}
         </div>
       </section>
     </>
