@@ -73,6 +73,7 @@ export default function TrafficPetitionTool() {
   const [approvalInfo, setApprovalInfo] = useState(false);
   const [approvalKvkk, setApprovalKvkk] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
   const updateField = (key: keyof TrafficFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -293,7 +294,6 @@ export default function TrafficPetitionTool() {
 
       setResult(data);
       window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
-      setTurnstileToken("");
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -301,6 +301,10 @@ export default function TrafficPetitionTool() {
           : "Beklenmeyen bir hata oluştu."
       );
     } finally {
+      if (turnstileSiteKey) {
+        setTurnstileToken("");
+        setTurnstileResetKey((current) => current + 1);
+      }
       setIsLoading(false);
     }
   };
@@ -599,12 +603,17 @@ export default function TrafficPetitionTool() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <button type="submit" className={primaryButtonClassName} disabled={isLoading}>
+              <button
+                type="submit"
+                className={primaryButtonClassName}
+                disabled={isLoading || Boolean(turnstileSiteKey && !turnstileToken)}
+              >
                 {isLoading ? "Dilekçe hazırlanıyor..." : "Dilekçeyi Gör"}
               </button>
             </div>
 
             <TurnstileWidget
+              key={turnstileResetKey}
               siteKey={turnstileSiteKey}
               onVerify={(token) => {
                 setTurnstileToken(token);
