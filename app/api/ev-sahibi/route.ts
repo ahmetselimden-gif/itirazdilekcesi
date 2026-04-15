@@ -5,6 +5,7 @@ import {
   validateHousingPetitionData,
   type HousingPetitionData,
 } from "@/lib/generatePetition";
+import { validateGenerationSecurity } from "@/lib/generationSecurity";
 import { createPetitionToken } from "@/lib/petitionToken";
 import { checkRateLimit, isTrustedOrigin } from "@/lib/requestSecurity";
 
@@ -25,7 +26,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = (await request.json()) as Partial<HousingPetitionData>;
+    const body = (await request.json()) as Partial<HousingPetitionData> & {
+      turnstileToken?: string;
+    };
+    const securityError = await validateGenerationSecurity(
+      request,
+      body.turnstileToken?.trim() || ""
+    );
+
+    if (securityError) {
+      return securityError;
+    }
+
     const payload = sanitizeHousingPetitionData(body);
     const validationError = validateHousingPetitionData(payload);
 

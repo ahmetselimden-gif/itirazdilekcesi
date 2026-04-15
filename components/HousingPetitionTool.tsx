@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PaymentButton from "@/components/PaymentButton";
 import PdfDownloadHandler from "@/components/PdfDownloadHandler";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_VERIFY_ENDPOINT,
@@ -62,6 +63,8 @@ const textareaClassName =
 const primaryButtonClassName =
   "inline-flex min-h-12 items-center justify-center rounded-xl border border-navy bg-navy px-6 text-sm font-bold text-white transition duration-200 hover:bg-navy-deep hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export default function HousingPetitionTool({
   apiPath,
   eyebrow,
@@ -98,6 +101,8 @@ export default function HousingPetitionTool({
   const [paymentAccessToken, setPaymentAccessToken] = useState("");
   const [approvalInfo, setApprovalInfo] = useState(false);
   const [approvalKvkk, setApprovalKvkk] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
   const updateField = (key: keyof HousingFormData, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -265,13 +270,22 @@ export default function HousingPetitionTool({
       return;
     }
 
+    if (turnstileSiteKey && !turnstileToken) {
+      setError("Lütfen güvenlik doğrulamasını tamamlayın.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(apiPath, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          turnstileToken,
+        }),
       });
       const data = (await response.json()) as HousingGenerationResult | { error?: string };
 
@@ -288,6 +302,10 @@ export default function HousingPetitionTool({
           : "Beklenmeyen bir hata oluştu."
       );
     } finally {
+      if (turnstileSiteKey) {
+        setTurnstileToken("");
+        setTurnstileResetKey((current) => current + 1);
+      }
       setIsLoading(false);
     }
   };
@@ -461,7 +479,21 @@ export default function HousingPetitionTool({
               </div>
             </div>
 
-            <button type="submit" className={primaryButtonClassName} disabled={isLoading}>
+            <TurnstileWidget
+              key={turnstileResetKey}
+              siteKey={turnstileSiteKey}
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                setError("");
+              }}
+              onExpire={() => setTurnstileToken("")}
+            />
+
+            <button
+              type="submit"
+              className={primaryButtonClassName}
+              disabled={isLoading || Boolean(turnstileSiteKey && !turnstileToken)}
+            >
               {isLoading ? "Metniniz düzenleniyor..." : "Dilekçemi Oluştur"}
             </button>
 
