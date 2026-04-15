@@ -6,12 +6,12 @@ const ROOT_HOST = "itirazdilekcesi.com";
 
 const defaultCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net",
-  "frame-src 'self' https://www.paytr.com https://www.googletagmanager.com",
+  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com",
+  "frame-src 'self' https://www.paytr.com https://www.googletagmanager.com https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -20,12 +20,12 @@ const defaultCsp = [
 
 const paytrResultCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net",
-  "frame-src 'self' https://www.paytr.com https://paytr.com https://www.googletagmanager.com",
+  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com",
+  "frame-src 'self' https://www.paytr.com https://paytr.com https://www.googletagmanager.com https://challenges.cloudflare.com",
   "frame-ancestors https://www.paytr.com https://paytr.com",
   "base-uri 'self'",
   "form-action 'self'",
