@@ -608,7 +608,7 @@ export default function TrafficPetitionTool() {
                 className={primaryButtonClassName}
                 disabled={isLoading || Boolean(turnstileSiteKey && !turnstileToken)}
               >
-                {isLoading ? "Dilekçe hazırlanıyor..." : "Dilekçeyi Gör"}
+                {isLoading ? "Dilekçe hazırlanıyor..." : "Dilekçeyi Oluştur"}
               </button>
             </div>
 

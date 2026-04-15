@@ -494,7 +494,7 @@ export default function HousingPetitionTool({
               className={primaryButtonClassName}
               disabled={isLoading || Boolean(turnstileSiteKey && !turnstileToken)}
             >
-              {isLoading ? "Metniniz düzenleniyor..." : "Dilekçemi Oluştur"}
+              {isLoading ? "Dilekçe hazırlanıyor..." : "Dilekçeyi Oluştur"}
             </button>
 
             {error ? (
@@ -544,7 +544,7 @@ export default function HousingPetitionTool({
                     className={`${primaryButtonClassName} w-full sm:w-auto`}
                     onClick={() => setShowPayment(true)}
                   >
-                    PDF indir (Ücretli)
+                    PDF indir (19,99 TL)
                   </button>
                 </div>
               </>
