@@ -450,7 +450,7 @@ export default function HousingPetitionTool({
                   required
                 />
                 <p className="text-xs text-muted/70">
-                  Boş bırakırsanız ceza yerine göre otomatik oluşturulur.
+                  Başvuracağınız mahkeme veya kurumu yazın. Emin değilseniz Sulh Hukuk Mahkemesi yazabilirsiniz.
                 </p>
               </div>
               </div>
