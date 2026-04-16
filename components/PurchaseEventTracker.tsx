@@ -15,18 +15,21 @@ export default function PurchaseEventTracker() {
       return;
     }
 
-    window.dataLayer = window.dataLayer || [];
-    window.gtag =
-      window.gtag ||
-      function gtagFallback(...args: unknown[]) {
-        window.dataLayer?.push(args);
-      };
-
-    window.gtag("event", "purchase", {
+    const purchaseEvent = {
       transaction_id: Date.now().toString(),
       value: 20,
       currency: "TRY",
+    };
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: "purchase",
+      ...purchaseEvent,
     });
+
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "purchase", purchaseEvent);
+    }
   }, []);
 
   return null;
