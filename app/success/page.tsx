@@ -1,11 +1,8 @@
 import Link from "next/link";
-import PurchaseEvent from "./PurchaseEvent";
 
 export default function SuccessPage() {
   return (
-    <>
-      <PurchaseEvent />
-      <section className="mx-auto max-w-2xl rounded-[24px] border border-line/80 bg-surface px-6 py-10 text-center shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">
+    <section className="mx-auto max-w-2xl rounded-[24px] border border-line/80 bg-surface px-6 py-10 text-center shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
           Odeme tamamlandi
         </p>
@@ -23,6 +20,5 @@ export default function SuccessPage() {
           Ana sayfaya don
         </Link>
       </section>
-    </>
   );
 }

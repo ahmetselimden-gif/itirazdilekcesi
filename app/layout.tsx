@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
+import PurchaseEventTracker from "@/components/PurchaseEventTracker";
 import "./globals.css";
 
 const GTM_ID = "GTM-MCDMDGF4";
@@ -110,6 +111,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
       </head>
       <body className="bg-shell font-body text-ink antialiased">
+        <PurchaseEventTracker />
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}

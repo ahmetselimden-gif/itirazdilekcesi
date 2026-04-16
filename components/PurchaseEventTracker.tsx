@@ -9,8 +9,12 @@ declare global {
   }
 }
 
-export default function PurchaseEvent() {
+export default function PurchaseEventTracker() {
   useEffect(() => {
+    if (!window.location.search.includes("payment=success")) {
+      return;
+    }
+
     window.dataLayer = window.dataLayer || [];
     window.gtag =
       window.gtag ||
