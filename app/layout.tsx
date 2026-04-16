@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
-import PurchaseEventTracker from "@/components/PurchaseEventTracker";
 import "./globals.css";
 
 const GTM_ID = "GTM-MCDMDGF4";
@@ -109,9 +108,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','${GTM_ID}');`,
           }}
         />
+        <Script
+          id="purchase-event-on-payment-success"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `if (window.location.search.includes("payment=success")) {
+  var purchaseEvent = {
+    transaction_id: Date.now().toString(),
+    value: 20,
+    currency: "TRY"
+  };
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "purchase",
+    transaction_id: purchaseEvent.transaction_id,
+    value: purchaseEvent.value,
+    currency: purchaseEvent.currency
+  });
+  if (typeof window.gtag === "function") {
+    window.gtag("event", "purchase", purchaseEvent);
+  }
+}`,
+          }}
+        />
       </head>
       <body className="bg-shell font-body text-ink antialiased">
-        <PurchaseEventTracker />
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
