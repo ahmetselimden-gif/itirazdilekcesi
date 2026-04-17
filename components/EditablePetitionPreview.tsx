@@ -39,8 +39,9 @@ export default function EditablePetitionPreview({
           aria-label="Dilekçe metni önizleme"
         />
       ) : (
-        <div className="rounded-[22px] border border-line bg-white p-4 sm:p-6">
-          <PetitionDocument petition={petition} className="blur-[1.25px]" />
+        <div className="relative overflow-hidden rounded-[22px] border border-line bg-white p-4 sm:p-6">
+          <PetitionDocument petition={petition} className="select-none blur-[1.25px]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-white/15 backdrop-blur-[4px]" />
         </div>
       )}
     </div>
