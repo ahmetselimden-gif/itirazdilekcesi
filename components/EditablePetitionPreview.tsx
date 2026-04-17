@@ -40,7 +40,7 @@ export default function EditablePetitionPreview({
         />
       ) : (
         <div className="rounded-[22px] border border-line bg-white p-4 sm:p-6">
-          <PetitionDocument petition={petition} />
+          <PetitionDocument petition={petition} className="blur-[1.25px]" />
         </div>
       )}
     </div>
