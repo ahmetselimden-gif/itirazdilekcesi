@@ -30,11 +30,11 @@ function getDistrictFromLocation(location: string) {
     .filter(Boolean);
 
   if (parts.length === 0) {
-    return "NÖBETÇİ SULH CEZA HÂKİMLİĞİ'NE";
+    return "SULH CEZA HÂKİMLİĞİ'NE";
   }
 
   const district = parts[parts.length - 1];
-  return `${toTurkishUppercase(district)} NÖBETÇİ SULH CEZA HÂKİMLİĞİ'NE`;
+  return `${toTurkishUppercase(district)} SULH CEZA HÂKİMLİĞİ'NE`;
 }
 
 export function resolveInstitution(institution: string, location: string) {
