@@ -186,7 +186,9 @@ export default function TrafficPetitionTool() {
         setShowPayment(true);
         setPaymentReady(true);
         setPaymentAccessToken(data.accessToken);
-        setPaymentStatusMessage("Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz.");
+        setPaymentStatusMessage(
+          "Ödeme doğrulandı. Dilekçenizi düzenleyip PDF dosyasını indirebilirsiniz."
+        );
         window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, data.accessToken);
       } catch {
         setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
@@ -212,7 +214,7 @@ export default function TrafficPetitionTool() {
         setPaymentReady(true);
         setPaymentAccessToken(token);
         setPaymentStatusMessage(
-          "Ödeme doğrulandı. PDF dosyasını şimdi indirebilirsiniz."
+          "Ödeme doğrulandı. Dilekçenizi düzenleyip PDF dosyasını indirebilirsiniz."
         );
         window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, token);
       } catch {
@@ -686,6 +688,11 @@ export default function TrafficPetitionTool() {
                 PDF indirme işlemi, ödeme doğrulandıktan sonra aktif olur.
               </p>
 
+              <p className="mt-2 text-sm leading-7 text-muted">
+                Ödeme sonrası dilekçenizi düzenleyebilir, son halini verdikten sonra PDF olarak
+                indirebilirsiniz.
+              </p>
+
               <div className="mt-5 space-y-4 rounded-[20px] border border-line bg-surface-soft p-5">
                 <div>
                   <h4 className="text-sm font-bold text-navy">Ön Bilgilendirme</h4>
@@ -744,7 +751,7 @@ export default function TrafficPetitionTool() {
                   accessToken={paymentAccessToken}
                   petitionToken={result.petitionToken}
                   petitionText={result.petition}
-                  autoStart={paymentReady}
+                  autoStart={false}
                   onError={setPaymentError}
                   disabled={!paymentReady || !paymentAccessToken || !result.petitionToken}
                 />

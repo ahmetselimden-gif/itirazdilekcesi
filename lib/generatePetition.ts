@@ -29,6 +29,26 @@ function toUpper(value: string) {
   return value.toLocaleUpperCase("tr-TR");
 }
 
+function formatHousingInstitution(institution: string) {
+  return normalize(institution);
+}
+
+function enforceHousingInstitutionLine(petition: string, institution: string) {
+  const lines = petition.split("\n");
+  const firstContentIndex = lines.findIndex((line) => line.trim());
+  const institutionIndex = lines.findIndex(
+    (line, index) => index > firstContentIndex && line.trim()
+  );
+
+  if (institutionIndex < 0) {
+    return petition;
+  }
+
+  const nextLines = [...lines];
+  nextLines[institutionIndex] = toUpper(institution);
+  return nextLines.join("\n");
+}
+
 export function sanitizeHousingPetitionData(
   data: Partial<HousingPetitionData>
 ): HousingPetitionData {
@@ -40,7 +60,7 @@ export function sanitizeHousingPetitionData(
     rentedAddress: normalize(data.rentedAddress),
     problemType: normalize(data.problemType),
     explanation: normalize(data.explanation),
-    institution: normalize(data.institution),
+    institution: formatHousingInstitution(data.institution || ""),
   };
 }
 
@@ -243,7 +263,7 @@ export async function generateHousingPetition(
     }
 
     return {
-      petition: parsed.petition.trim(),
+      petition: enforceHousingInstitutionLine(parsed.petition.trim(), formattedData.institution),
       evaluationLevel: parsed.evaluationLevel,
       evaluationComment: parsed.evaluationComment.trim(),
       source: "openai",
