@@ -57,11 +57,20 @@ function applySecurityHeaders(response: NextResponse, pathname: string) {
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const host = request.headers.get("host") || "";
+  const referer = request.headers.get("referer") || "";
+  const isGoogleReferral = /^https?:\/\/([^/]+\.)?google\./i.test(referer);
 
   if (host === ROOT_HOST) {
     url.protocol = "https:";
     url.host = PRIMARY_HOST;
     const redirectResponse = NextResponse.redirect(url, 308);
+    return applySecurityHeaders(redirectResponse, url.pathname);
+  }
+
+  if (isGoogleReferral && request.nextUrl.pathname === "/kiraci") {
+    url.pathname = "/";
+    url.search = "";
+    const redirectResponse = NextResponse.redirect(url);
     return applySecurityHeaders(redirectResponse, url.pathname);
   }
 

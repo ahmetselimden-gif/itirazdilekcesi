@@ -19,6 +19,8 @@ export default function EditablePetitionPreview({
   isPaid,
   onChange,
 }: EditablePetitionPreviewProps) {
+  const shouldBlurPreview = !isPaid;
+
   return (
     <div className="mt-5 space-y-3">
       <div
@@ -39,8 +41,18 @@ export default function EditablePetitionPreview({
           aria-label="Dilekçe metni önizleme"
         />
       ) : (
-        <div className="rounded-[22px] border border-line bg-white p-4 sm:p-6">
-          <PetitionDocument petition={petition} />
+        <div className="relative overflow-hidden rounded-[22px] border border-line bg-white p-4 sm:p-6">
+          <div className={shouldBlurPreview ? "blur-[6px]" : ""}>
+            <PetitionDocument petition={petition} />
+          </div>
+          {shouldBlurPreview ? (
+            <>
+              <div className="pointer-events-none absolute inset-0 bg-white/20" />
+              <div className="pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 rounded-lg border border-gold/50 bg-white/90 px-4 py-3 text-center text-sm font-bold leading-6 text-navy shadow-[0_14px_32px_rgba(17,34,51,0.12)] sm:inset-x-8">
+                PDF metni ödeme sonrası tamamen netleşir.
+              </div>
+            </>
+          ) : null}
         </div>
       )}
     </div>
