@@ -32,6 +32,26 @@ const paytrResultCsp = [
   "object-src 'none'",
 ].join("; ");
 
+const GOOGLE_AD_QUERY_PARAMS = ["gclid", "gbraid", "wbraid", "gad_source"];
+
+function isGoogleUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return /^([^/]+\.)?google\./i.test(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isGoogleSourcedKiraciRequest(request: NextRequest) {
+  const referer = request.headers.get("referer") || "";
+  const hasGoogleAdParam = GOOGLE_AD_QUERY_PARAMS.some((param) =>
+    request.nextUrl.searchParams.has(param)
+  );
+
+  return request.nextUrl.pathname === "/kiraci" && (isGoogleUrl(referer) || hasGoogleAdParam);
+}
+
 function applySecurityHeaders(response: NextResponse, pathname: string) {
   if (pathname === "/odeme/paytr-sonuc") {
     response.headers.delete("X-Frame-Options");
@@ -62,6 +82,13 @@ export function middleware(request: NextRequest) {
     url.protocol = "https:";
     url.host = PRIMARY_HOST;
     const redirectResponse = NextResponse.redirect(url, 308);
+    return applySecurityHeaders(redirectResponse, url.pathname);
+  }
+
+  if (isGoogleSourcedKiraciRequest(request)) {
+    url.pathname = "/trafik-cezasi-itiraz";
+    url.search = "";
+    const redirectResponse = NextResponse.redirect(url, 307);
     return applySecurityHeaders(redirectResponse, url.pathname);
   }
 
