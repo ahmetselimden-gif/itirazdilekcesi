@@ -1,6 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  trackPdfDownloadError,
+  trackPdfDownloadStart,
+  trackPdfDownloadSuccess,
+} from "@/lib/analytics";
 
 type PdfDownloadButtonProps = {
   fileName: string;
@@ -34,6 +39,7 @@ export default function PdfDownloadButton({
 
     setIsDownloading(true);
     onError?.("");
+    trackPdfDownloadStart(fileName);
 
     try {
       const response = await fetch("/api/payments/download", {
@@ -74,10 +80,12 @@ export default function PdfDownloadButton({
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      trackPdfDownloadSuccess(fileName);
     } catch (error) {
-      onError?.(
-        error instanceof Error ? error.message : "PDF indirilirken beklenmeyen bir hata oluştu."
-      );
+      const message =
+        error instanceof Error ? error.message : "PDF indirilirken beklenmeyen bir hata oluştu.";
+      onError?.(message);
+      trackPdfDownloadError(fileName, message);
     } finally {
       setIsDownloading(false);
     }

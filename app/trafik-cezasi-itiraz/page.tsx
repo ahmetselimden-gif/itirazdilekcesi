@@ -1,8 +1,27 @@
 import Script from "next/script";
+import type { Metadata } from "next";
 import TrafficPetitionTool from "@/components/TrafficPetitionTool";
 import { trafficNews } from "@/lib/news";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
+
+export const metadata: Metadata = {
+  title: "Trafik Cezası İtiraz Dilekçesi Hazırla",
+  description:
+    "Trafik cezasına itiraz dilekçesi hazırlayın. Radar, kırmızı ışık, park ve diğer trafik cezaları için resmi PDF dilekçe oluşturun.",
+  keywords: [
+    "trafik cezası itiraz dilekçesi",
+    "trafik cezasına itiraz",
+    "radar cezası itiraz dilekçesi",
+    "kırmızı ışık cezası itiraz",
+    "park cezası itiraz",
+    "sulh ceza hakimliği trafik cezası itiraz",
+  ],
+  alternates: {
+    canonical: "/trafik-cezasi-itiraz",
+  },
+};
+
 const faqItems = [
   {
     question: "Trafik cezasına itiraz süresi ne zaman başlar?",

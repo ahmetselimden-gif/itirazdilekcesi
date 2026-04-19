@@ -9,6 +9,7 @@ type PaymentButtonProps = {
   tckn?: string;
   petitionToken?: string;
   returnPath: string;
+  panel?: string;
   disabled?: boolean;
   isLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
@@ -24,6 +25,7 @@ export default function PaymentButton({
   tckn = "",
   petitionToken = "",
   returnPath,
+  panel,
   disabled = false,
   isLoading = false,
   onLoadingChange,
@@ -63,7 +65,7 @@ export default function PaymentButton({
         throw new Error(data.error || "Ödeme sayfası açılamadı.");
       }
 
-      trackBeginCheckout();
+      trackBeginCheckout(panel);
       window.location.href = data.checkoutUrl;
     } catch (error) {
       onError?.(

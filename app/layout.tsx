@@ -12,6 +12,40 @@ const defaultTitle = "İtiraz Dilekçesi Hazırlama Paneli";
 const defaultDescription =
   "Trafik cezası, kiracı ve ev sahibi itiraz dilekçesi panelleri arasından ihtiyacınıza uygun aracı seçin.";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const logoUrl = `${siteUrl}/branding/itirazdilekcesi-logo-primary.svg`;
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
+  name: siteName,
+  url: siteUrl,
+  logo: {
+    "@type": "ImageObject",
+    url: logoUrl,
+  },
+  email: "destek@itirazdilekcesi.com",
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: "destek@itirazdilekcesi.com",
+      availableLanguage: ["tr"],
+    },
+  ],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: siteName,
+  url: siteUrl,
+  inLanguage: "tr-TR",
+  publisher: {
+    "@id": `${siteUrl}/#organization`,
+  },
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -107,6 +141,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','${GTM_ID}');`,
           }}
+        />
+        <Script
+          id="organization-json-ld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <Script
+          id="website-json-ld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className="bg-shell font-body text-ink antialiased">

@@ -5,7 +5,13 @@ import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PaymentButton from "@/components/PaymentButton";
 import PdfDownloadHandler from "@/components/PdfDownloadHandler";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import { trackPurchase } from "@/lib/analytics";
+import {
+  trackPaymentPanelOpen,
+  trackPetitionGenerateError,
+  trackPetitionGenerateStart,
+  trackPetitionGenerateSuccess,
+  trackPurchase,
+} from "@/lib/analytics";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_VERIFY_ENDPOINT,
@@ -270,16 +276,20 @@ export default function HousingPetitionTool({
     setShowPayment(false);
     setPaymentReady(false);
     setPaymentAccessToken("");
+    trackPetitionGenerateStart(panelKey);
 
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
+      trackPetitionGenerateError(panelKey, validationError);
       setIsLoading(false);
       return;
     }
 
     if (turnstileSiteKey && !turnstileToken) {
-      setError("Lütfen güvenlik doğrulamasını tamamlayın.");
+      const message = "Lütfen güvenlik doğrulamasını tamamlayın.";
+      setError(message);
+      trackPetitionGenerateError(panelKey, message);
       setIsLoading(false);
       return;
     }
@@ -302,13 +312,15 @@ export default function HousingPetitionTool({
       }
 
       setResult(data);
+      trackPetitionGenerateSuccess(panelKey);
       window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
     } catch (requestError) {
-      setError(
+      const message =
         requestError instanceof Error
           ? requestError.message
-          : "Beklenmeyen bir hata oluştu."
-      );
+          : "Beklenmeyen bir hata oluştu.";
+      setError(message);
+      trackPetitionGenerateError(panelKey, message);
     } finally {
       if (turnstileSiteKey) {
         setTurnstileToken("");
@@ -552,7 +564,10 @@ export default function HousingPetitionTool({
                   <button
                     type="button"
                     className={`${primaryButtonClassName} w-full sm:w-auto`}
-                    onClick={() => setShowPayment(true)}
+                    onClick={() => {
+                      setShowPayment(true);
+                      trackPaymentPanelOpen(panelKey);
+                    }}
                   >
                     PDF indir (19,99 TL)
                   </button>
@@ -625,6 +640,7 @@ export default function HousingPetitionTool({
                   fullName={form.fullName}
                   petitionToken={result.petitionToken}
                   returnPath={returnPath}
+                  panel={panelKey}
                   disabled={!approvalInfo || !approvalKvkk}
                   isLoading={isPaymentLoading}
                   onLoadingChange={setIsPaymentLoading}

@@ -4,7 +4,14 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import { trackBeginCheckout, trackPurchase } from "@/lib/analytics";
+import {
+  trackBeginCheckout,
+  trackPaymentPanelOpen,
+  trackPetitionGenerateError,
+  trackPetitionGenerateStart,
+  trackPetitionGenerateSuccess,
+  trackPurchase,
+} from "@/lib/analytics";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_INITIATE_ENDPOINT,
@@ -30,6 +37,7 @@ const defaultForm: TrafficFormData = {
 };
 
 const SNAPSHOT_KEY = getCheckoutSnapshotKey("trafik");
+const PANEL_KEY = "trafik";
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const fieldClassName =
@@ -262,16 +270,20 @@ export default function TrafficPetitionTool() {
     setShowPayment(false);
     setPaymentReady(false);
     setPaymentAccessToken("");
+    trackPetitionGenerateStart(PANEL_KEY);
 
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
+      trackPetitionGenerateError(PANEL_KEY, validationError);
       setIsLoading(false);
       return;
     }
 
     if (turnstileSiteKey && !turnstileToken) {
-      setError("Lütfen güvenlik doğrulamasını tamamlayın.");
+      const message = "Lütfen güvenlik doğrulamasını tamamlayın.";
+      setError(message);
+      trackPetitionGenerateError(PANEL_KEY, message);
       setIsLoading(false);
       return;
     }
@@ -299,13 +311,15 @@ export default function TrafficPetitionTool() {
       }
 
       setResult(data);
+      trackPetitionGenerateSuccess(PANEL_KEY);
       window.sessionStorage.removeItem(PAYMENT_ACCESS_TOKEN_KEY);
     } catch (requestError) {
-      setError(
+      const message =
         requestError instanceof Error
           ? requestError.message
-          : "Beklenmeyen bir hata oluştu."
-      );
+          : "Beklenmeyen bir hata oluştu.";
+      setError(message);
+      trackPetitionGenerateError(PANEL_KEY, message);
     } finally {
       if (turnstileSiteKey) {
         setTurnstileToken("");
@@ -350,7 +364,7 @@ export default function TrafficPetitionTool() {
         throw new Error(data.error || "Ödeme sayfası açılamadı.");
       }
 
-      trackBeginCheckout();
+      trackBeginCheckout(PANEL_KEY);
       window.location.href = data.checkoutUrl;
     } catch (requestError) {
       setPaymentError(
@@ -672,7 +686,10 @@ export default function TrafficPetitionTool() {
                   <button
                     type="button"
                     className={`${primaryButtonClassName} w-full sm:w-auto`}
-                    onClick={() => setShowPayment(true)}
+                    onClick={() => {
+                      setShowPayment(true);
+                      trackPaymentPanelOpen(PANEL_KEY);
+                    }}
                   >
                     PDF indir (19,99 TL)
                   </button>
