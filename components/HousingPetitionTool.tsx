@@ -480,9 +480,11 @@ export default function HousingPetitionTool({
                 placeholder="Sorununuzu detaylı olarak açıklayın..."
                 required
               />
-              <p className="text-xs text-muted/70">
-                <span className="font-semibold">Örnek:</span> Ev sahibi aylık kira bedelini haksız yere %50 artırdı, sözleşme şartlarına aykırı...
-              </p>
+              {panelKey === "kiraci" ? (
+                <p className="text-xs text-muted/70">
+                  <span className="font-semibold">Örnek:</span> Ev sahibi aylık kira bedelini haksız yere %50 artırdı, sözleşme şartlarına aykırı...
+                </p>
+              ) : null}
               </div>
               </div>
             </div>
