@@ -140,7 +140,7 @@ const howItWorks = [
     step: "2",
     title: "Dilekçeniz hazırlansın",
     description:
-      "Yapay zeka destekli sistem, bilgilerinizi hukuki terminolojiye uygun resmi dilekçe formatına dönüştürür.",
+      "Bilgileriniz, hukuki terminolojiye uygun resmi dilekçe formatına otomatik olarak dönüştürülür.",
   },
   {
     step: "3",
@@ -271,9 +271,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </h1>
 
         <p className="mt-4 max-w-2xl text-base leading-8 text-muted sm:text-lg">
-          Trafik cezası, kiracı veya ev sahibi uyuşmazlığı için yapay zeka destekli,
-          resmi formatta dilekçe. <strong className="text-navy">2 dakikada hazır</strong>,
-          anında PDF olarak indirin.
+          Trafik cezası, kiracı veya ev sahibi uyuşmazlığı için resmi formatta
+          dilekçe. <strong className="text-navy">2 dakikada hazır</strong>, anında
+          PDF olarak indirin.
         </p>
 
         {/* Trust badge row */}
