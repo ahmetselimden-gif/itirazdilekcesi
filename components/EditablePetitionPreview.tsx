@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import PetitionDocument from "@/components/PetitionDocument";
 
 type EditablePetitionPreviewProps = {
@@ -39,9 +40,38 @@ export default function EditablePetitionPreview({
           aria-label="Dilekçe metni önizleme"
         />
       ) : (
-        <div className="relative overflow-hidden rounded-[22px] border border-line bg-white p-4 sm:p-6">
-          <PetitionDocument petition={petition} className="select-none blur-[1.25px]" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-white/15 backdrop-blur-[4px]" />
+        <div
+          className="relative overflow-hidden rounded-[22px] border border-line bg-white p-4 sm:p-6"
+          onCopy={(event) => event.preventDefault()}
+          onCut={(event) => event.preventDefault()}
+          onContextMenu={(event) => event.preventDefault()}
+        >
+          <PetitionDocument
+            petition={petition}
+            className="pointer-events-none select-none"
+          />
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="-rotate-12 text-center opacity-[0.13]">
+              <Image
+                src="/branding/itirazdilekcesi-logo-primary.svg"
+                alt=""
+                width={520}
+                height={109}
+                className="mx-auto h-auto w-[min(78vw,520px)] max-w-full"
+                draggable={false}
+              />
+              <p className="mt-5 text-4xl font-bold uppercase tracking-[0.18em] text-navy sm:text-6xl">
+                itirazdilekcesi.com
+              </p>
+            </div>
+          </div>
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(-28deg, transparent 0 96px, rgba(21, 52, 77, 0.55) 96px 98px, transparent 98px 170px)",
+            }}
+          />
         </div>
       )}
     </div>

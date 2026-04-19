@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { trackBeginCheckout } from "@/lib/analytics";
 import { PAYMENT_INITIATE_ENDPOINT } from "@/lib/payment";
 
 type PaymentButtonProps = {
@@ -62,6 +63,7 @@ export default function PaymentButton({
         throw new Error(data.error || "Ödeme sayfası açılamadı.");
       }
 
+      trackBeginCheckout();
       window.location.href = data.checkoutUrl;
     } catch (error) {
       onError?.(

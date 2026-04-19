@@ -108,29 +108,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','${GTM_ID}');`,
           }}
         />
-        <Script
-          id="purchase-event-on-payment-success"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `if (window.location.search.includes("payment=success")) {
-  var purchaseEvent = {
-    transaction_id: Date.now().toString(),
-    value: 20,
-    currency: "TRY"
-  };
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: "purchase",
-    transaction_id: purchaseEvent.transaction_id,
-    value: purchaseEvent.value,
-    currency: purchaseEvent.currency
-  });
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "purchase", purchaseEvent);
-  }
-}`,
-          }}
-        />
       </head>
       <body className="bg-shell font-body text-ink antialiased">
         <noscript>

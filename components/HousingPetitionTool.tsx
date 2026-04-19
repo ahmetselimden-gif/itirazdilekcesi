@@ -5,6 +5,7 @@ import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PaymentButton from "@/components/PaymentButton";
 import PdfDownloadHandler from "@/components/PdfDownloadHandler";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import { trackPurchase } from "@/lib/analytics";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_VERIFY_ENDPOINT,
@@ -164,6 +165,8 @@ export default function HousingPetitionTool({
           valid?: boolean;
           error?: string;
           accessToken?: string;
+          orderId?: string;
+          paidPrice?: string;
         };
 
         if (!response.ok || !data.valid || !data.accessToken) {
@@ -182,6 +185,7 @@ export default function HousingPetitionTool({
           "Ödeme doğrulandı. Dilekçenizi düzenleyip PDF dosyasını indirebilirsiniz."
         );
         window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, data.accessToken);
+        trackPurchase(data.orderId || oid, data.paidPrice);
       } catch {
         setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
       }

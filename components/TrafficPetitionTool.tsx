@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useId, useState } from "react";
 import EditablePetitionPreview from "@/components/EditablePetitionPreview";
 import PdfDownloadButton from "@/components/PdfDownloadButton";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import { trackBeginCheckout, trackPurchase } from "@/lib/analytics";
 import {
   PAYMENT_ACCESS_TOKEN_KEY,
   PAYMENT_INITIATE_ENDPOINT,
@@ -172,6 +173,8 @@ export default function TrafficPetitionTool() {
           valid?: boolean;
           error?: string;
           accessToken?: string;
+          orderId?: string;
+          paidPrice?: string;
         };
 
         if (!response.ok || !data.valid || !data.accessToken) {
@@ -190,6 +193,7 @@ export default function TrafficPetitionTool() {
           "Ödeme doğrulandı. Dilekçenizi düzenleyip PDF dosyasını indirebilirsiniz."
         );
         window.sessionStorage.setItem(PAYMENT_ACCESS_TOKEN_KEY, data.accessToken);
+        trackPurchase(data.orderId || oid, data.paidPrice);
       } catch {
         setPaymentError("PayTR ödeme doğrulaması sırasında bağlantı hatası oluştu.");
       }
@@ -346,6 +350,7 @@ export default function TrafficPetitionTool() {
         throw new Error(data.error || "Ödeme sayfası açılamadı.");
       }
 
+      trackBeginCheckout();
       window.location.href = data.checkoutUrl;
     } catch (requestError) {
       setPaymentError(
