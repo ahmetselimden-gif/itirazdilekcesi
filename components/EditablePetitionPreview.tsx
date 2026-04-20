@@ -72,6 +72,7 @@ export default function EditablePetitionPreview({
                 "repeating-linear-gradient(-28deg, transparent 0 96px, rgba(21, 52, 77, 0.55) 96px 98px, transparent 98px 170px)",
             }}
           />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-white/45 backdrop-blur-[5px]" />
         </div>
       )}
     </div>
