@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Script from "next/script";
 import type { Metadata } from "next";
 import HousingPetitionTool from "@/components/HousingPetitionTool";
@@ -38,9 +39,28 @@ const faqItems = [
 ];
 
 const conversionHighlights = [
-  "8,000+ ev sahibi korundu",
+  "Tek odaklı ev sahibi paneli",
   "Resmi dilekçe formatı",
   "3 dakikada hazır",
+];
+
+const compactOwnerGuides = [
+  {
+    href: "/ev-sahibi-itiraz-dilekcesi",
+    label: "Ev sahibi rehberi",
+  },
+  {
+    href: "#kira-odememe",
+    label: "Kira ödememe",
+  },
+  {
+    href: "#tahliye-talebi",
+    label: "Tahliye talebi",
+  },
+  {
+    href: "#eve-zarar",
+    label: "Eve zarar verme",
+  },
 ];
 
 const organizationSchema = {
@@ -197,6 +217,28 @@ export default function EvSahibiPage() {
           ]}
         />
 
+        <section className="rounded-[20px] border border-line/80 bg-surface px-5 py-5 shadow-[0_16px_38px_rgba(17,34,51,0.05)] sm:px-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-bold text-navy-deep">Formdan sonra kÄ±sa rehberlere de bakabilirsiniz</p>
+              <p className="mt-1 text-sm leading-7 text-muted">
+                AkÄ±ÅŸÄ± bozmadan, ilgili ev sahibi konularÄ±na tek tÄ±kla geÃ§ebilirsiniz.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {compactOwnerGuides.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-surface-soft px-4 text-sm font-bold text-navy transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="space-y-5">
           <div className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">
             <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
@@ -217,7 +259,10 @@ export default function EvSahibiPage() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
-            <article className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+            <article
+              id="kira-odememe"
+              className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8"
+            >
               <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
                 <span className="h-px w-8 bg-navy/30" />
                 Kira ödememe
@@ -234,7 +279,10 @@ export default function EvSahibiPage() {
               </p>
             </article>
 
-            <article className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+            <article
+              id="tahliye-talebi"
+              className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8"
+            >
               <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
                 <span className="h-px w-8 bg-navy/30" />
                 Tahliye talebi
@@ -269,7 +317,10 @@ export default function EvSahibiPage() {
               </p>
             </article>
 
-            <article className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+            <article
+              id="eve-zarar"
+              className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8"
+            >
               <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
                 <span className="h-px w-8 bg-navy/30" />
                 Eve zarar verme

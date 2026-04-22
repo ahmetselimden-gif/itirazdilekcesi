@@ -47,26 +47,23 @@ const faqItems = [
 ];
 
 const conversionHighlights = [
-  "1000+ kişi kullandı",
+  "Tek odaklı trafik paneli",
   "Resmi dilekçe formatı",
   "5 dakikada hazır",
 ];
 
-const featuredTrafficGuides = [
+const compactTrafficGuides = [
   {
     href: "/radar-cezasi-itiraz-edilir-mi",
-    title: "Radar cezası itiraz edilir mi?",
-    description: "Radar ölçümü, delil eksikliği ve itiraz gerekçeleri hakkında rehber.",
+    label: "Radar cezası rehberi",
   },
   {
     href: "/trafik-cezasi-itiraz-dilekcesi-nasil-yazilir",
-    title: "Trafik cezası itiraz dilekçesi nasıl yazılır?",
-    description: "Başvuruda hangi bilgilerin yer alması gerektiğini adım adım inceleyin.",
+    label: "Dilekçe nasıl yazılır?",
   },
   {
     href: "/trafik-cezasi-itiraz-sureci-2026",
-    title: "Trafik cezası itiraz süreci 2026",
-    description: "Tebligat, 15 günlük süre ve başvuru akışı için özet kılavuz.",
+    label: "İtiraz süreci 2026",
   },
 ];
 
@@ -285,36 +282,29 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
-          <div className="mb-5">
-            <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
-              <span className="h-px w-8 bg-navy/30" />
-              Rehberler
-            </span>
-            <h2 className="mt-3 font-display text-3xl text-navy-deep">
-              Başvuru öncesi okunabilecek trafik cezası rehberleri
-            </h2>
-            <p className="mt-3 max-w-4xl text-[15px] leading-8 text-muted">
-              Trafik cezasına itiraz etmeden önce radar ölçümü, dilekçe yazımı ve süre
-              hesabı gibi en sık karışan konuları bu sayfalardan inceleyebilirsiniz.
-            </p>
-          </div>
+        <TrafficPetitionTool />
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            {featuredTrafficGuides.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-[20px] border border-line bg-surface-soft p-5 transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
-              >
-                <p className="text-base font-bold text-navy-deep">{item.title}</p>
-                <p className="mt-3 text-[15px] leading-8 text-muted">{item.description}</p>
-              </Link>
-            ))}
+        <section className="rounded-[20px] border border-line/80 bg-surface px-5 py-5 shadow-[0_16px_38px_rgba(17,34,51,0.05)] sm:px-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-bold text-navy-deep">Formdan sonra kısa rehberlere de bakabilirsiniz</p>
+              <p className="mt-1 text-sm leading-7 text-muted">
+                Başvuruyu bölmeden, ihtiyaç halinde ilgili rehberleri yeni sekmede açabilirsiniz.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {compactTrafficGuides.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-surface-soft px-4 text-sm font-bold text-navy transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
-
-        <TrafficPetitionTool />
 
         <section className="space-y-5">
           <div className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">

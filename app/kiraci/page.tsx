@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Script from "next/script";
 import type { Metadata } from "next";
 import HousingPetitionTool from "@/components/HousingPetitionTool";
@@ -37,9 +38,28 @@ const faqItems = [
 ];
 
 const conversionHighlights = [
-  "10,000+ kiracı korundu",
+  "Tek odaklı kiracı paneli",
   "Resmi dilekçe formatı",
   "3 dakikada hazır",
+];
+
+const compactTenantGuides = [
+  {
+    href: "/kiraci-itiraz-dilekcesi",
+    label: "Kiracı rehberi",
+  },
+  {
+    href: "/dilekce/kira-artisi-itiraz",
+    label: "Kira artışı itirazı",
+  },
+  {
+    href: "/dilekce/tahliye-itiraz",
+    label: "Tahliye itirazı",
+  },
+  {
+    href: "/dilekce/depozito-iade-dilekcesi",
+    label: "Depozito iadesi",
+  },
 ];
 
 const organizationSchema = {
@@ -195,6 +215,28 @@ export default function KiraciPage() {
             "Diğer",
           ]}
         />
+
+        <section className="rounded-[20px] border border-line/80 bg-surface px-5 py-5 shadow-[0_16px_38px_rgba(17,34,51,0.05)] sm:px-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-bold text-navy-deep">Formdan sonra kısa rehberlere de bakabilirsiniz</p>
+              <p className="mt-1 text-sm leading-7 text-muted">
+                Akışı bozmadan, ihtiyacınıza göre ilgili kiracı konularını yeni sekmede açabilirsiniz.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {compactTenantGuides.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-surface-soft px-4 text-sm font-bold text-navy transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <section className="space-y-5">
           <div className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.06)] sm:px-8">
