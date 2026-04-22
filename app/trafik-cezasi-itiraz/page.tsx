@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Script from "next/script";
 import type { Metadata } from "next";
 import TrafficPetitionTool from "@/components/TrafficPetitionTool";
@@ -49,6 +50,24 @@ const conversionHighlights = [
   "1000+ kişi kullandı",
   "Resmi dilekçe formatı",
   "5 dakikada hazır",
+];
+
+const featuredTrafficGuides = [
+  {
+    href: "/radar-cezasi-itiraz-edilir-mi",
+    title: "Radar cezası itiraz edilir mi?",
+    description: "Radar ölçümü, delil eksikliği ve itiraz gerekçeleri hakkında rehber.",
+  },
+  {
+    href: "/trafik-cezasi-itiraz-dilekcesi-nasil-yazilir",
+    title: "Trafik cezası itiraz dilekçesi nasıl yazılır?",
+    description: "Başvuruda hangi bilgilerin yer alması gerektiğini adım adım inceleyin.",
+  },
+  {
+    href: "/trafik-cezasi-itiraz-sureci-2026",
+    title: "Trafik cezası itiraz süreci 2026",
+    description: "Tebligat, 15 günlük süre ve başvuru akışı için özet kılavuz.",
+  },
 ];
 
 const organizationSchema = {
@@ -263,6 +282,35 @@ export default function HomePage() {
                 Trafik cezalarına 15 gün içinde itiraz edilmezse hak kaybı olur.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-[24px] border border-line/80 bg-surface px-6 py-7 shadow-[0_20px_50px_rgba(17,34,51,0.05)] sm:px-8">
+          <div className="mb-5">
+            <span className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-navy">
+              <span className="h-px w-8 bg-navy/30" />
+              Rehberler
+            </span>
+            <h2 className="mt-3 font-display text-3xl text-navy-deep">
+              Başvuru öncesi okunabilecek trafik cezası rehberleri
+            </h2>
+            <p className="mt-3 max-w-4xl text-[15px] leading-8 text-muted">
+              Trafik cezasına itiraz etmeden önce radar ölçümü, dilekçe yazımı ve süre
+              hesabı gibi en sık karışan konuları bu sayfalardan inceleyebilirsiniz.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {featuredTrafficGuides.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-[20px] border border-line bg-surface-soft p-5 transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+              >
+                <p className="text-base font-bold text-navy-deep">{item.title}</p>
+                <p className="mt-3 text-[15px] leading-8 text-muted">{item.description}</p>
+              </Link>
+            ))}
           </div>
         </section>
 

@@ -46,6 +46,27 @@ const panelItems = [
   },
 ];
 
+const trafficGuideLinks = [
+  {
+    href: "/radar-cezasi-itiraz-edilir-mi",
+    title: "Radar cezası itiraz edilir mi?",
+    description:
+      "Radar ölçümü, delil eksikliği ve itiraz gerekçeleri hakkında kısa rehber.",
+  },
+  {
+    href: "/trafik-cezasi-itiraz-dilekcesi-nasil-yazilir",
+    title: "Trafik cezası itiraz dilekçesi nasıl yazılır?",
+    description:
+      "Başvuruda hangi bilgilerin yer alması gerektiğini adım adım öğrenin.",
+  },
+  {
+    href: "/trafik-cezasi-itiraz-sureci-2026",
+    title: "Trafik cezası itiraz süreci 2026",
+    description:
+      "Süre hesabı, tebligat ve başvurunun nereye yapılacağına dair özet kılavuz.",
+  },
+];
+
 const trustBadges = [
   {
     title: "SSL Güvenli",
@@ -523,6 +544,27 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               {page.title}
             </Link>
           ))}
+        </div>
+        <div className="mt-8 rounded-[20px] border border-gold/40 bg-gold-soft/35 px-5 py-6">
+          <h3 className="font-display text-2xl text-navy-deep">
+            Trafik cezası rehberlerinde öne çıkan başlıklar
+          </h3>
+          <p className="mt-3 text-[15px] leading-8 text-muted">
+            Başvuru öncesinde radar cezası, dilekçe yazımı ve süre hesabı gibi temel
+            konuları bu rehberlerden inceleyebilirsiniz.
+          </p>
+          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+            {trafficGuideLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-[18px] border border-line/80 bg-surface px-4 py-4 transition duration-200 hover:-translate-y-0.5 hover:border-navy/40"
+              >
+                <p className="text-sm font-bold text-navy-deep">{item.title}</p>
+                <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
