@@ -3,14 +3,15 @@ import type { NextRequest } from "next/server";
 
 const PRIMARY_HOST = "www.itirazdilekcesi.com";
 const ROOT_HOST = "itirazdilekcesi.com";
+const claritySources = "https://*.clarity.ms https://c.bing.com";
 
 const defaultCsp = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://www.clarity.ms",
+  `default-src 'self' ${claritySources}`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com ${claritySources}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.clarity.ms https:",
+  `img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com ${claritySources} https:`,
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com https://www.clarity.ms",
+  `connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com ${claritySources}`,
   "frame-src 'self' https://www.paytr.com https://www.googletagmanager.com https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -19,12 +20,12 @@ const defaultCsp = [
 ].join("; ");
 
 const paytrResultCsp = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://www.clarity.ms",
+  `default-src 'self' ${claritySources}`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com ${claritySources}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.clarity.ms https:",
+  `img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com ${claritySources} https:`,
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com https://www.clarity.ms",
+  `connect-src 'self' https://api.openai.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com ${claritySources}`,
   "frame-src 'self' https://www.paytr.com https://paytr.com https://www.googletagmanager.com https://challenges.cloudflare.com",
   "frame-ancestors https://www.paytr.com https://paytr.com",
   "base-uri 'self'",
