@@ -212,7 +212,7 @@ const organizationSchema = {
   "@type": "Organization",
   name: "itirazdilekcesi.com",
   url: siteUrl,
-  email: "destek@itirazdilekcesi.com",
+  email: "destekitirazdilekcesi@gmail.com",
 };
 
 const websiteSchema = {

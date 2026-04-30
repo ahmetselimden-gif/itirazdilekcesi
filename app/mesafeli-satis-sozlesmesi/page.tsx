@@ -12,7 +12,7 @@ export default function DistanceSalesPage() {
       <p>Satıcı: Ahmet Selim Baltaş</p>
       <p>Adres: Fatih Mah. Sümer Cad. No: 9 Sultanbeyli / İstanbul</p>
       <p>Telefon: 0506 102 14 01</p>
-      <p>E-posta: destek@itirazdilekcesi.com</p>
+      <p>E-posta: destekitirazdilekcesi@gmail.com</p>
       <p>Alıcı: Sipariş formunu dolduran kullanıcıdır.</p>
 
       <h2>2. Sözleşmenin Konusu</h2>

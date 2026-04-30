@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const accessToken = createDownloadAccessToken({
       orderId: merchantOid,
       conversationId: merchantOid,
-      email: "destek@itirazdilekcesi.com",
+      email: "destekitirazdilekcesi@gmail.com",
       paidPrice: String(paidPrice).replace(",", "."),
     });
 

@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       buyer: {
         fullName,
         tckn,
-        email: "destek@itirazdilekcesi.com",
+        email: "destekitirazdilekcesi@gmail.com",
         phone: "+905555555555",
         address: "Dijital hizmet teslimatı",
         city: "Istanbul",

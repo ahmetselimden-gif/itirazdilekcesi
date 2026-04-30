@@ -25,12 +25,12 @@ const organizationJsonLd = {
     "@type": "ImageObject",
     url: logoUrl,
   },
-  email: "destek@itirazdilekcesi.com",
+  email: "destekitirazdilekcesi@gmail.com",
   contactPoint: [
     {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: "destek@itirazdilekcesi.com",
+      email: "destekitirazdilekcesi@gmail.com",
       availableLanguage: ["tr"],
     },
   ],
@@ -239,7 +239,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     Destek
                   </p>
                   <p className="mt-2 text-sm leading-7 text-muted">
-                    destek@itirazdilekcesi.com
+                    destekitirazdilekcesi@gmail.com
                   </p>
                 </div>
               </div>

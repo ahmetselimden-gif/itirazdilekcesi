@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     const response = await initializePaytrIframe({
       merchantOid,
       userIp: getClientIp(request),
-      email: "destek@itirazdilekcesi.com",
+      email: "destekitirazdilekcesi@gmail.com",
       userName: fullName,
       userAddress: "Dijital hizmet teslimatı",
       userPhone: "05061021401",
