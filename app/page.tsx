@@ -2,6 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Script from "next/script";
+import {
+  HOME_MAINTENANCE_ENABLED,
+  MAINTENANCE_MESSAGE,
+} from "@/lib/maintenance";
 import { allSeoPages } from "@/lib/seoContent";
 
 const siteUrl = "https://www.itirazdilekcesi.com";
@@ -259,6 +263,24 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     });
 
     redirect(`/trafik-cezasi-itiraz?${query.toString()}`);
+  }
+
+  if (HOME_MAINTENANCE_ENABLED) {
+    return (
+      <main className="mx-auto flex min-h-[60vh] max-w-5xl items-center justify-center px-6 py-20 text-center">
+        <section className="max-w-xl rounded-3xl border border-line bg-white px-8 py-14 shadow-sm sm:px-14">
+          <p className="text-sm font-bold uppercase tracking-[0.22em] text-gold">
+            Bakım çalışması
+          </p>
+          <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-navy-deep sm:text-5xl">
+            {MAINTENANCE_MESSAGE}
+          </h1>
+          <p className="mt-5 text-base leading-8 text-muted">
+            Ana sayfamızı yeniliyoruz. Kısa süre içinde yeniden buradayız.
+          </p>
+        </section>
+      </main>
+    );
   }
 
   return (
